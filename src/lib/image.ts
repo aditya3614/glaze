@@ -8,54 +8,39 @@ export async function fileToCanvas(file: Blob): Promise<HTMLCanvasElement> {
   return c;
 }
 
-const CODE = [
-  'import { createClient } from "@acme/payments";',
-  '',
-  'const client = createClient({',
-  '  apiKey: "sk_live_51Hc9xQ2eZvKYlo2C8a7TqWd",',
-  '  region: "ap-south-1",',
-  '});',
-  '',
-  'export async function checkout(order: Order) {',
-  '  const session = await client.sessions.create({',
-  '    amount: order.total,',
-  '    currency: "INR",',
-  '    customer: "priya@example.com",',
-  '  });',
-  '',
-  '  return session.url;',
-  '}',
+const ui = (weight: number, size: number) => `${weight} ${size}px Figtree, ui-sans-serif, system-ui, sans-serif`;
+const mono = (size: number) => `500 ${size}px "Geist Mono", ui-monospace, monospace`;
+
+const INK = '#0f172a';
+const MUTED = '#64748b';
+const BORDER = '#e2e8f0';
+
+const NAV = ['Overview', 'Payments', 'Customers', 'Payouts', 'Disputes', 'Settings'];
+
+/** All data is made up. Each row is [label, value, monospace?]. */
+const CUSTOMER: [string, string, boolean?][] = [
+  ['Name', 'Rahul Mehta'],
+  ['Email', 'rahul.mehta@example.com'],
+  ['Phone', '+91 98765 43210'],
+  ['Customer ID', 'cus_Nq7xT29LbZ', true],
+  ['PAN', 'BQZPM4821K', true],
 ];
 
-const KEYWORDS = new Set(['import', 'from', 'const', 'export', 'async', 'function', 'await', 'return']);
-const FILES: [string, number, boolean?][] = [
-  ['src', 0],
-  ['api', 1],
-  ['checkout.ts', 2, true],
-  ['orders.ts', 2],
-  ['webhooks.ts', 2],
-  ['lib', 1],
-  ['.env.local', 0],
-  ['package.json', 0],
-  ['tsconfig.json', 0],
+const ACTIVITY: [string, string, string][] = [
+  ['Payment created', '14:32:05', '#94a3b8'],
+  ['3-D Secure challenge passed', '14:32:19', '#22c55e'],
+  ['Authorization requested from issuer', '14:32:20', '#94a3b8'],
+  ['Declined: insufficient funds', '14:32:21', '#ef4444'],
 ];
 
-function tokenColor(line: string, tok: string, end: number): string {
-  if (tok.startsWith('"')) return '#a5d6ff';
-  if (!/^[A-Za-z_$]/.test(tok)) return '#c9d1d9';
-  if (KEYWORDS.has(tok)) return '#ff7b72';
-  if (/^[A-Z]/.test(tok)) return '#ffa657';
-  if (line[end] === '(') return '#d2a8ff';
-  if (line[end] === ':') return '#79c0ff';
-  return '#e6edf3';
-}
-
-/** A fake code-editor screenshot so people can try Glaze instantly. */
+/**
+ * A fake payments dashboard so people can try Glaze instantly: it has personal
+ * details worth redacting and a failed payment worth pointing at.
+ */
 export async function makeSample(): Promise<HTMLCanvasElement> {
-  await Promise.all([
-    document.fonts.load('22px "Geist Mono"'),
-    document.fonts.load('500 17px Geist'),
-  ]).catch(() => undefined);
+  await Promise.all([document.fonts.load(ui(400, 16)), document.fonts.load(ui(700, 16)), document.fonts.load(mono(16))]).catch(
+    () => undefined,
+  );
 
   const W = 1600;
   const H = 1000;
@@ -63,72 +48,145 @@ export async function makeSample(): Promise<HTMLCanvasElement> {
   c.width = W;
   c.height = H;
   const x = c.getContext('2d')!;
+  x.textBaseline = 'middle';
 
-  x.fillStyle = '#0d1117';
+  const box = (bx: number, by: number, w: number, h: number, r: number, fill: string | CanvasGradient, stroke?: string) => {
+    x.beginPath();
+    x.roundRect(bx, by, w, h, r);
+    x.fillStyle = fill;
+    x.fill();
+    if (stroke) {
+      x.strokeStyle = stroke;
+      x.lineWidth = 1.5;
+      x.stroke();
+    }
+  };
+  const text = (s: string, tx: number, ty: number, font: string, color: string, align: CanvasTextAlign = 'left') => {
+    x.font = font;
+    x.fillStyle = color;
+    x.textAlign = align;
+    x.fillText(s, tx, ty);
+    return x.measureText(s).width;
+  };
+  const card = (cx: number, cy: number, w: number, h: number, title: string) => {
+    box(cx, cy, w, h, 16, '#ffffff', BORDER);
+    text(title, cx + 28, cy + 36, ui(700, 18), INK);
+    x.fillStyle = BORDER;
+    x.fillRect(cx, cy + 68, w, 1);
+  };
+  const badge = (label: string, right: number, cy: number, fill: string, color: string) => {
+    x.font = ui(600, 14);
+    const w = x.measureText(label).width + 28;
+    box(right - w, cy - 15, w, 30, 15, fill);
+    text(label, right - w / 2, cy, ui(600, 14), color, 'center');
+  };
+
+  x.fillStyle = '#f6f7f9';
   x.fillRect(0, 0, W, H);
 
   // Sidebar
-  x.fillStyle = '#010409';
-  x.fillRect(0, 0, 280, H);
-  x.fillStyle = '#21262d';
-  x.fillRect(279, 0, 1, H);
-  x.font = '600 13px Geist, sans-serif';
-  x.fillStyle = '#7d8590';
-  x.textBaseline = 'middle';
-  x.fillText('EXPLORER', 28, 30);
-  x.font = '500 17px Geist, sans-serif';
-  FILES.forEach(([name, depth, active], i) => {
-    const y = 76 + i * 38;
-    if (active) {
-      x.fillStyle = 'rgba(56,139,253,0.15)';
-      x.fillRect(0, y - 17, 279, 34);
-    }
-    x.fillStyle = active ? '#e6edf3' : '#9198a1';
-    x.fillText(name, 28 + depth * 20, y);
+  x.fillStyle = '#ffffff';
+  x.fillRect(0, 0, 260, H);
+  x.fillStyle = BORDER;
+  x.fillRect(259, 0, 1, H);
+  const logo = x.createLinearGradient(28, 22, 64, 58);
+  logo.addColorStop(0, '#818cf8');
+  logo.addColorStop(1, '#4f46e5');
+  box(28, 20, 38, 38, 11, logo);
+  text('P', 47, 40, ui(700, 20), '#ffffff', 'center');
+  text('Paydeck', 80, 40, ui(700, 21), INK);
+  NAV.forEach((label, i) => {
+    const ny = 118 + i * 50;
+    const active = label === 'Payments';
+    if (active) box(16, ny - 21, 228, 42, 10, '#eef2ff');
+    box(36, ny - 8, 16, 16, 5, active ? '#4f46e5' : '#cbd5e1');
+    text(label, 66, ny, ui(active ? 600 : 500, 16), active ? '#4338ca' : MUTED);
+  });
+  box(24, H - 76, 42, 42, 21, '#fde68a');
+  text('AK', 45, H - 55, ui(700, 14), '#92400e', 'center');
+  text('Ananya K.', 78, H - 64, ui(600, 15), INK);
+  text('Admin', 78, H - 44, ui(400, 13), MUTED);
+
+  // Top bar
+  x.fillStyle = '#ffffff';
+  x.fillRect(260, 0, W - 260, 72);
+  x.fillStyle = BORDER;
+  x.fillRect(260, 71, W - 260, 1);
+  let bx = 300;
+  bx += text('Payments', bx, 36, ui(500, 15), MUTED) + 12;
+  bx += text('/', bx, 36, ui(500, 15), '#cbd5e1') + 12;
+  text('pay_8KzQ3mX1vT', bx, 36, mono(15), INK);
+  box(W - 440, 17, 300, 38, 10, '#f1f5f9');
+  text('Search payments…', W - 416, 36, ui(400, 15), '#94a3b8');
+  text('⌘K', W - 160, 36, mono(13), '#94a3b8', 'right');
+  box(W - 116, 17, 38, 38, 19, '#f1f5f9');
+  box(W - 103, 30, 12, 12, 6, '#94a3b8');
+  box(W - 66, 17, 38, 38, 19, '#c7d2fe');
+  text('AK', W - 47, 36, ui(700, 13), '#3730a3', 'center');
+
+  const L = 300;
+  const R = W - 60;
+
+  // Title
+  text('Payment details', L, 120, ui(700, 30), INK);
+  text('Created Sep 24, 2026 at 14:32 IST', L, 156, ui(400, 16), MUTED);
+  box(R - 124, 100, 124, 42, 10, '#ffffff', BORDER);
+  text('Export', R - 62, 121, ui(600, 15), INK, 'center');
+
+  // Failure banner: the thing worth highlighting.
+  box(L, 188, R - L, 86, 14, '#fef2f2', '#fecaca');
+  box(L + 24, 211, 40, 40, 20, '#ef4444');
+  text('!', L + 44, 232, ui(700, 22), '#ffffff', 'center');
+  text('Payment failed', L + 82, 217, ui(700, 18), '#991b1b');
+  text('Card declined by the issuing bank: insufficient funds (code 51).', L + 82, 246, ui(400, 16), '#b91c1c');
+  box(R - 190, 209, 166, 44, 10, '#dc2626');
+  text('Retry payment', R - 107, 231, ui(600, 16), '#ffffff', 'center');
+
+  // Summary
+  const sw = 600;
+  card(L, 300, sw, 344, 'Summary');
+  text('Amount', L + 28, 396, ui(500, 14), MUTED);
+  text('₹12,499.00', L + 28, 434, ui(700, 36), INK);
+  const summary: [string, string][] = [
+    ['Status', ''],
+    ['Payment method', 'Visa •••• 4242'],
+    ['Order ID', 'ORD-2026-00871'],
+  ];
+  summary.forEach(([label, value], i) => {
+    const ry = 494 + i * 50;
+    x.fillStyle = '#f1f5f9';
+    x.fillRect(L + 28, ry - 25, sw - 56, 1);
+    text(label, L + 28, ry, ui(500, 15), MUTED);
+    if (label === 'Status') badge('Failed', L + sw - 28, ry, '#fee2e2', '#b91c1c');
+    else text(value, L + sw - 28, ry, i === 2 ? mono(15) : ui(600, 15), INK, 'right');
   });
 
-  // Tabs
-  x.fillStyle = '#010409';
-  x.fillRect(280, 0, W - 280, 54);
-  x.fillStyle = '#0d1117';
-  x.fillRect(280, 0, 200, 54);
-  x.fillStyle = '#f78166';
-  x.fillRect(280, 0, 200, 2);
-  x.font = '500 16px Geist, sans-serif';
-  x.fillStyle = '#e6edf3';
-  x.fillText('checkout.ts', 312, 28);
-  x.fillStyle = '#7d8590';
-  x.fillText('orders.ts', 512, 28);
-
-  // Code
-  x.font = '22px "Geist Mono", ui-monospace, monospace';
-  x.textBaseline = 'alphabetic';
-  CODE.forEach((line, i) => {
-    const y = 122 + i * 42;
-    x.textAlign = 'right';
-    x.fillStyle = '#6e7681';
-    x.fillText(String(i + 1), 344, y);
-    x.textAlign = 'left';
-    let cx = 380;
-    const re = /("[^"]*")|([A-Za-z_$][\w$]*)|(\s+)|(.)/g;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(line))) {
-      const tok = m[0];
-      x.fillStyle = tokenColor(line, tok, re.lastIndex);
-      x.fillText(tok, cx, y);
-      cx += x.measureText(tok).width;
+  // Customer: personal details worth redacting.
+  const cx = L + sw + 24;
+  const cw = R - cx;
+  card(cx, 300, cw, 344, 'Customer');
+  badge('KYC verified', cx + cw - 28, 336, '#dcfce7', '#15803d');
+  CUSTOMER.forEach(([label, value, isMono], i) => {
+    const ry = 400 + i * 52;
+    if (i) {
+      x.fillStyle = '#f1f5f9';
+      x.fillRect(cx + 28, ry - 26, cw - 56, 1);
     }
+    text(label, cx + 28, ry, ui(500, 15), MUTED);
+    text(value, cx + cw - 28, ry, isMono ? mono(16) : ui(600, 16), INK, 'right');
   });
 
-  // Status bar
-  x.fillStyle = '#161b22';
-  x.fillRect(0, H - 34, W, 34);
-  x.font = '500 14px Geist, sans-serif';
-  x.textBaseline = 'middle';
-  x.fillStyle = '#9198a1';
-  x.fillText('main   ✓ 0 problems', 24, H - 17);
-  x.textAlign = 'right';
-  x.fillText('TypeScript   UTF-8   Ln 4, Col 12', W - 24, H - 17);
+  // Activity timeline
+  card(L, 668, R - L, 296, 'Activity');
+  x.fillStyle = BORDER;
+  x.fillRect(L + 35, 766, 2, (ACTIVITY.length - 1) * 48);
+  ACTIVITY.forEach(([label, time, dot], i) => {
+    const ay = 766 + i * 48;
+    const last = i === ACTIVITY.length - 1;
+    box(L + 29, ay - 7, 14, 14, 7, dot, '#ffffff');
+    text(label, L + 60, ay, ui(last ? 600 : 500, 16), last ? '#b91c1c' : INK);
+    text(time, R - 28, ay, mono(14), MUTED, 'right');
+  });
 
   return c;
 }

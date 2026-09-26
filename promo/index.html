@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Glaze Promo</title>
+<style>
+@font-face { font-family: 'Inter Tight'; src: url(fonts/inter-tight-latin-wght-normal.woff2) format('woff2'); font-weight: 100 900; }
+@font-face { font-family: 'Instrument Serif'; src: url(fonts/instrument-serif-latin-400-normal.woff2) format('woff2'); font-style: normal; }
+@font-face { font-family: 'Instrument Serif'; src: url(fonts/instrument-serif-latin-400-italic.woff2) format('woff2'); font-style: italic; }
+@font-face { font-family: 'Figtree'; src: url(fonts/figtree-latin-wght-normal.woff2) format('woff2'); font-weight: 300 900; }
+@font-face { font-family: 'Geist Mono'; src: url(fonts/geist-mono-latin-500-normal.woff2) format('woff2'); font-weight: 500; }
+
+:root {
+  --accent: #3b74d1;
+  --accent-soft: color-mix(in oklab, #3b74d1 40%, white);
+  --ink: #1a1a1a;
+  --paper: #f7f6f2;
+  --red: #ff453a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+body { font-family: 'Figtree', sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+#stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #070708; }
+.abs { position: absolute; }
+.layer { position: absolute; inset: 0; }
+.serif { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+.display { font-family: 'Inter Tight', sans-serif; font-weight: 600; letter-spacing: -0.045em; }
+.mono { font-family: 'Geist Mono', monospace; }
+.line { display: block; overflow: hidden; padding: 0.06em 0.04em 0.14em; margin: -0.06em -0.04em -0.14em; white-space: nowrap; }
+.line > span { display: inline-block; will-change: transform; }
+
+/* ---------- dark act ---------- */
+#dark { background: radial-gradient(70% 70% at 50% 40%, #141418 0%, #09090b 60%, #050506 100%); }
+#search { left: 480px; top: 496px; width: 960px; height: 88px; border-radius: 44px; background: #17171a; box-shadow: 0 0 0 1.5px rgba(255,255,255,.09), 0 30px 80px -20px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.06); display: flex; align-items: center; gap: 22px; padding: 0 34px; transform-origin: 50% 50%; }
+#search svg { flex: none; }
+#q { font-size: 34px; color: #f2f2f4; font-weight: 450; letter-spacing: -0.01em; white-space: pre; }
+#q .ph { color: rgba(255,255,255,.32); }
+#caret { width: 3px; height: 40px; background: var(--accent-soft); border-radius: 2px; margin-left: -18px; }
+#enter { margin-left: auto; font-size: 20px; color: rgba(255,255,255,.55); border: 1.5px solid rgba(255,255,255,.18); border-radius: 10px; padding: 6px 12px; font-family: 'Geist Mono'; }
+
+.win { position: absolute; overflow: hidden; border-radius: 14px; background: #1c1c20; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 30px 60px -24px rgba(0,0,0,.9); }
+.win .row { position: absolute; inset: 0; display: flex; align-items: center; gap: 26px; padding: 0 28px; }
+.win .rk { font-family: 'Geist Mono'; font-size: 22px; color: rgba(255,255,255,.35); width: 34px; }
+.win .sk { height: 13px; border-radius: 7px; background: rgba(255,255,255,.16); }
+.win .sk2 { height: 9px; border-radius: 5px; background: rgba(120,200,160,.25); margin-top: 11px; }
+.win .page { position: absolute; inset: 0; opacity: 0; }
+.win .chrome { position: absolute; left: 0; right: 0; top: 0; height: 30px; background: #26262b; display: flex; align-items: center; gap: 7px; padding: 0 12px; }
+.win .chrome i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.2); }
+.win .chrome b { height: 12px; width: 150px; border-radius: 6px; background: rgba(255,255,255,.1); margin-left: 20px; }
+.win .body { position: absolute; left: 0; right: 0; top: 30px; bottom: 0; background: #e8e8ec; overflow: hidden; }
+.win .body .blk { position: absolute; border-radius: 6px; background: #cfd0d6; }
+.win .veil { position: absolute; left: 0; right: 0; top: 30px; bottom: 0; background: rgba(8,8,12,.55); }
+.win .modal { position: absolute; left: 50%; top: calc(50% + 15px); width: 236px; margin-left: -118px; padding: 18px 18px 16px; background: #fff; border-radius: 14px; text-align: center; box-shadow: 0 20px 40px -10px rgba(0,0,0,.6); }
+.win .modal .ic { width: 34px; height: 34px; margin: 0 auto 10px; border-radius: 10px; display: grid; place-items: center; }
+.win .modal h4 { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: #111; line-height: 1.2; }
+.win .modal .btn { margin-top: 12px; height: 34px; border-radius: 9px; color: #fff; font-size: 14px; font-weight: 600; display: grid; place-items: center; }
+.win .modal .bar { margin-top: 16px; height: 8px; border-radius: 4px; background: #e5e7eb; overflow: hidden; }
+.win .modal .bar i { display: block; height: 100%; width: 38%; background: #64748b; border-radius: 4px; }
+.win .modal .x { position: absolute; right: 10px; top: 8px; font-size: 14px; color: #c0c0c6; }
+.win .badge { position: absolute; left: 10px; top: 40px; font-family: 'Geist Mono'; font-size: 13px; color: #fff; background: var(--red); padding: 3px 8px; border-radius: 7px; }
+
+#kin { color: #fff; text-align: center; }
+.kline { position: absolute; left: 0; right: 0; top: 470px; font-size: 118px; line-height: 1; }
+.kline .red { color: var(--red); }
+#why { position: absolute; left: 0; right: 0; top: 330px; text-align: center; font-size: 360px; line-height: 1; color: #fff; }
+#drop { position: absolute; left: 0; top: 0; width: 64px; height: 84px; margin: -60px 0 0 -32px; }
+#ring { position: absolute; border-radius: 50%; border: 3px solid var(--accent-soft); }
+
+/* ---------- paper world ---------- */
+#paper { background: var(--paper); }
+#paper .dots { position: absolute; inset: 0; background:
+    radial-gradient(60% 45% at 50% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 70%),
+    radial-gradient(circle, rgba(20,20,20,.085) 1.2px, transparent 1.7px) 0 0 / 26px 26px;
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 35%, #000 35%, transparent 88%); }
+#paper .aurora { position: absolute; left: -10%; right: -10%; bottom: -8%; height: 38%; filter: blur(22px);
+  background:
+    radial-gradient(34% 46% at 24% 100%, rgba(255,255,255,.95), transparent 70%),
+    radial-gradient(26% 34% at 72% 104%, rgba(255,255,255,.75), transparent 70%),
+    linear-gradient(to top, color-mix(in oklab, var(--accent) 80%, #0b2447) 0%, color-mix(in oklab, var(--accent) 50%, white) 30%, color-mix(in oklab, var(--accent) 10%, var(--paper)) 62%, transparent 100%); }
+#paper .stars { position: absolute; left: 0; right: 0; bottom: 0; height: 28%; background-image: radial-gradient(circle, rgba(255,255,255,.95) 1.3px, transparent 2px); background-size: 7px 7px;
+  -webkit-mask-image: radial-gradient(38% 75% at 24% 100%, #000 25%, transparent 72%); opacity: .8; }
+#paper .stars.s2 { -webkit-mask-image: radial-gradient(28% 60% at 74% 100%, #000 15%, transparent 70%); opacity: .55; }
+
+.app-icon { position: absolute; display: grid; place-items: center;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 70%, white) 0%, var(--accent) 55%, color-mix(in oklab, var(--accent) 85%, black) 100%);
+  box-shadow: inset 0 3px 2px rgba(255,255,255,.65), inset 0 -6px 16px color-mix(in oklab, color-mix(in oklab, var(--accent) 40%, black) 35%, transparent), 0 28px 60px -18px color-mix(in oklab, var(--accent) 60%, transparent); }
+.app-icon svg { filter: drop-shadow(0 2px 0 rgba(255,255,255,.4)); }
+#lock { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+#lockIcon { left: -80px; top: -80px; width: 160px; height: 160px; border-radius: 45px; }
+#lockWord { position: absolute; left: 116px; top: -104px; font-size: 190px; line-height: 1.1; white-space: nowrap; }
+#lockWord span { display: inline-block; }
+
+.chip { position: absolute; display: flex; align-items: center; gap: 12px; height: 64px; padding: 0 28px 0 22px; border-radius: 32px; white-space: nowrap;
+  background: rgba(255,255,255,.78); box-shadow: 0 0 0 1.5px rgba(26,26,26,.07), 0 16px 34px -18px rgba(20,30,60,.35), inset 0 1px 0 #fff; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; }
+.chip svg { color: var(--accent); }
+
+/* left text column */
+.col { position: absolute; left: 130px; }
+.big { font-size: 118px; line-height: 1; }
+.desc { font-size: 29px; line-height: 1.38; color: rgba(26,26,26,.58); font-weight: 450; letter-spacing: -0.005em; }
+.eyebrow { font-family: 'Geist Mono'; font-size: 20px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.h2 { font-size: 68px; line-height: 1.04; }
+.h2 .serif { font-size: 1.08em; }
+
+.key { position: absolute; width: 116px; height: 116px; border-radius: 26px; background: linear-gradient(#fff, #f1f0ec); display: grid; place-items: center; font-size: 52px; font-weight: 600; color: #333;
+  box-shadow: 0 0 0 1.5px rgba(26,26,26,.08), 0 10px 0 -2px #dcdad3, 0 22px 30px -12px rgba(20,20,40,.35); }
+
+/* compositions */
+.comp { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+.comp .bg { position: absolute; overflow: hidden; }
+.comp .wnd { position: absolute; overflow: hidden; background: #fff; }
+.comp .tbar { position: absolute; left: 0; right: 0; top: 0; background: linear-gradient(#f7f7f8, #eeeef0); border-bottom: 1px solid #e2e2e6; overflow: hidden; }
+.comp .tbar .tl { position: absolute; left: 18px; top: 50%; margin-top: -7px; display: flex; gap: 9px; }
+.comp .tbar .tl i { width: 14px; height: 14px; border-radius: 50%; }
+.comp .tbar .tt { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; font-size: 15px; font-weight: 600; color: #6b6b73; }
+.comp .view { position: absolute; left: 0; overflow: hidden; }
+.comp .shot { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.comp .shot canvas { position: absolute; left: 0; top: 0; }
+.red { position: absolute; overflow: hidden; border-radius: 8px; }
+.solid { position: absolute; background: #0e0e10; border-radius: 6px; }
+.spot { position: absolute; border-radius: 18px; }
+.ann { position: absolute; left: 0; top: 0; overflow: visible; }
+.tag { position: absolute; white-space: nowrap; font-weight: 700; color: #fff; background: #ff3b30; border-radius: 12px; box-shadow: 0 10px 24px -8px rgba(255,59,48,.6), 0 0 0 3px #fff; }
+
+.mesh-blue { background:
+  radial-gradient(60% 70% at 12% 8%, #a9ccff 0%, transparent 70%),
+  radial-gradient(55% 65% at 92% 18%, #4f86e0 0%, transparent 70%),
+  radial-gradient(70% 70% at 55% 108%, #1b3f8f 0%, transparent 72%),
+  radial-gradient(40% 50% at 30% 70%, #6aa2ff 0%, transparent 70%), #12306b; }
+.mesh-peach { background:
+  radial-gradient(70% 60% at 10% 10%, #ff9a8b 0%, transparent 70%),
+  radial-gradient(60% 55% at 90% 20%, #ffe29f 0%, transparent 70%),
+  radial-gradient(70% 60% at 60% 100%, #ff6a88 0%, transparent 70%), #ffd6c9; }
+.mesh-lagoon { background:
+  radial-gradient(70% 70% at 20% 90%, #14b8a6 0%, transparent 70%),
+  radial-gradient(70% 70% at 85% 15%, #0ea5e9 0%, transparent 70%),
+  radial-gradient(40% 40% at 50% 45%, #22d3ee 0%, transparent 70%), #042f2e; }
+
+#toolbar { position: absolute; height: 64px; display: flex; align-items: center; gap: 6px; padding: 0 8px; border-radius: 32px; background: rgba(255,255,255,.86);
+  box-shadow: 0 0 0 1.5px rgba(26,26,26,.07), 0 20px 40px -20px rgba(20,30,60,.4), inset 0 1px 0 #fff; }
+#toolbar .tb { position: relative; width: 50px; height: 48px; display: grid; place-items: center; color: #444; border-radius: 24px; z-index: 1; }
+#toolbar .sep { width: 1.5px; height: 28px; background: rgba(0,0,0,.1); margin: 0 6px; }
+#toolbar .copy { height: 48px; padding: 0 22px 0 18px; border-radius: 24px; background: var(--ink); color: #fff; display: flex; align-items: center; gap: 9px; font-size: 18px; font-weight: 600; }
+#tbActive { position: absolute; top: 8px; width: 50px; height: 48px; border-radius: 24px; background: var(--ink); z-index: 0; }
+#toast { position: absolute; height: 54px; padding: 0 24px 0 16px; border-radius: 27px; background: var(--ink); color: #fff; display: flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 600; white-space: nowrap; box-shadow: 0 20px 40px -14px rgba(0,0,0,.5); }
+#toast .ok { width: 28px; height: 28px; border-radius: 50%; background: #30d158; display: grid; place-items: center; }
+#cursor { position: absolute; left: 0; top: 0; width: 40px; height: 40px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.35)); }
+
+/* compare */
+.crow { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 18px; }
+.cchip { height: 70px; padding: 0 30px; border-radius: 35px; display: grid; place-items: center; font-size: 28px; font-weight: 600; white-space: nowrap; background: #fff; color: rgba(26,26,26,.72); box-shadow: 0 0 0 1.5px rgba(26,26,26,.1), 0 14px 30px -18px rgba(0,0,0,.35); }
+.cchip.g { height: 96px; padding: 0 46px; border-radius: 48px; font-size: 42px; background: var(--accent); color: #fff; box-shadow: inset 0 2px 1px rgba(255,255,255,.35), 0 24px 50px -20px color-mix(in oklab, var(--accent) 80%, transparent); }
+.carr { font-size: 30px; color: rgba(26,26,26,.3); }
+.carr.g { color: var(--accent); font-size: 40px; }
+.clabel { position: absolute; left: 0; right: 0; text-align: center; font-size: 26px; font-weight: 600; }
+#strike { position: absolute; height: 6px; border-radius: 3px; background: var(--red); transform-origin: 0 50%; }
+
+#endH { position: absolute; left: 0; right: 0; top: 0; text-align: center; transform-origin: 50% 0; font-size: 132px; line-height: 1.02; }
+#endH .serif { color: var(--accent); font-size: 1.1em; }
+#url { position: absolute; left: 0; right: 0; text-align: center; font-size: 34px; color: rgba(26,26,26,.72); }
+#tagline { position: absolute; left: 0; right: 0; text-align: center; font-size: 26px; color: rgba(26,26,26,.48); font-weight: 500; }
+
+.grain { position: absolute; inset: -40px; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+#vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(90% 90% at 50% 50%, transparent 60%, rgba(0,0,0,.12) 100%); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ================= ACT I: the problem ================= -->
+  <div id="dark" class="layer">
+    <div id="gridCam" class="layer">
+      <div id="wins" class="layer"></div>
+    </div>
+    <div id="search" class="abs">
+      <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+      <div id="q"></div><div id="caret"></div>
+      <div id="enter">↵</div>
+    </div>
+    <div id="kin" class="layer">
+      <div class="kline display" id="k1"><span class="line"><span>Top 10 results.</span></span></div>
+      <div class="kline display" id="k2"><span class="line"><span><span class="red">10</span> sign-up walls.</span></span></div>
+      <div class="kline display" id="k3"><span class="line"><span>Just to crop <span class="serif" style="font-size:1.12em">one</span> screenshot.</span></span></div>
+    </div>
+    <div id="why" class="serif">Why?</div>
+    <div id="ring"></div>
+    <svg id="drop" viewBox="0 0 24 30"><defs><linearGradient id="dg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a9c6f5"/><stop offset="1" stop-color="#3b74d1"/></linearGradient></defs><path fill="url(#dg)" d="M12 1s-10 11-10 18a10 10 0 0 0 20 0C22 12 12 1 12 1z"/><ellipse cx="8" cy="18" rx="2" ry="3.6" fill="#fff" opacity=".55" transform="rotate(20 8 18)"/></svg>
+  </div>
+
+  <!-- ================= ACT II+: the paper world ================= -->
+  <div id="paper" class="layer">
+    <div class="dots"></div>
+    <div class="aurora"></div>
+    <div class="stars"></div>
+    <div class="stars s2"></div>
+
+    <!-- chips under the reveal -->
+    <div id="chips" class="layer"></div>
+
+    <!-- main example -->
+    <div id="mainText">
+      <div class="col" id="mt" style="top:300px">
+        <div class="big display" id="mw"></div>
+        <div class="desc" id="md" style="margin-top:28px"></div>
+      </div>
+      <div class="key" id="keyCmd">⌘</div>
+      <div class="key" id="keyV">V</div>
+    </div>
+
+    <div class="col" id="chatText" style="top:318px">
+      <div class="eyebrow"><span class="line"><span>Chats</span></span></div>
+      <div class="h2 display" style="margin-top:26px"><span class="line"><span>Share the message.</span></span><span class="line"><span class="serif">Not the whole chat.</span></span></div>
+      <div class="desc" style="margin-top:32px"><span class="line"><span>Blur the history in one drag.</span></span><span class="line"><span>Keep only what they need.</span></span></div>
+    </div>
+    <div class="col" id="bankText" style="top:318px">
+      <div class="eyebrow"><span class="line"><span>Bank statements</span></span></div>
+      <div class="h2 display" style="margin-top:26px"><span class="line"><span>Prove the payment.</span></span><span class="line"><span class="serif">Hide everything else.</span></span></div>
+      <div class="desc" style="margin-top:32px"><span class="line"><span>Account numbers, balances, address.</span></span><span class="line"><span>Blacked out before you hit send.</span></span></div>
+    </div>
+
+    <div id="comps" class="layer"></div>
+    <svg id="cursor" style="display:none" viewBox="0 0 32 32"><path d="M6 3.5v22.2l5.6-5.3 3.6 8.4 3.9-1.7-3.6-8.2 7.8-.3z" fill="#111" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+
+    <!-- compare -->
+    <div id="compare" class="layer">
+      <div class="clabel" id="cl1" style="top:330px;color:rgba(26,26,26,.45)">Most screenshot editors</div>
+      <div class="crow" id="row1" style="top:388px"></div>
+      <div id="strike"></div>
+      <div class="clabel" id="cl2" style="top:584px;color:var(--accent)">Glaze</div>
+      <div class="crow" id="row2" style="top:640px"></div>
+    </div>
+
+    <!-- end -->
+    <div id="end" class="layer">
+      <div id="endH" class="display"><span class="line"><span>The <span class="serif">easiest</span> way</span></span><span class="line"><span>to edit a screenshot.</span></span></div>
+      <div id="url" class="mono">glazed.website</div>
+      <div id="tagline">Free &nbsp;·&nbsp; No sign-up &nbsp;·&nbsp; Nothing leaves your browser</div>
+    </div>
+
+    <div id="lock">
+      <div id="lockIcon" class="app-icon">
+        <svg viewBox="0 0 24 24" width="90" height="90"><path fill="color-mix(in oklab, #3b74d1 45%, black)" d="M12 2.5s-6.5 7-6.5 11.3a6.5 6.5 0 0 0 13 0C18.5 9.5 12 2.5 12 2.5z"/><ellipse cx="9.6" cy="13.8" rx="1.3" ry="2.3" fill="color-mix(in oklab, #3b74d1 30%, white)" opacity=".55" transform="rotate(20 9.6 13.8)"/></svg>
+      </div>
+      <div id="lockWord" class="display"></div>
+    </div>
+  </div>
+
+  <div id="vig"></div>
+  <div class="grain" id="grain"></div>
+</div>
+
+<script>
+// ============================================================ utils
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, parent, html) => { const d = document.createElement(tag); if (cls) d.className = cls; if (html != null) d.innerHTML = html; if (parent) parent.appendChild(d); return d; };
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const E = {
+  lin: (p) => p,
+  inQuad: (p) => p * p,
+  outQuad: (p) => 1 - (1 - p) * (1 - p),
+  inCubic: (p) => p * p * p,
+  outCubic: (p) => 1 - Math.pow(1 - p, 3),
+  inOutCubic: (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2),
+  inQuart: (p) => p ** 4,
+  outQuart: (p) => 1 - Math.pow(1 - p, 4),
+  inOutQuart: (p) => (p < 0.5 ? 8 * p ** 4 : 1 - Math.pow(-2 * p + 2, 4) / 2),
+  outQuint: (p) => 1 - Math.pow(1 - p, 5),
+  inOutQuint: (p) => (p < 0.5 ? 16 * p ** 5 : 1 - Math.pow(-2 * p + 2, 5) / 2),
+  inExpo: (p) => (p <= 0 ? 0 : Math.pow(2, 10 * p - 10)),
+  outExpo: (p) => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p)),
+  inOutExpo: (p) => (p <= 0 ? 0 : p >= 1 ? 1 : p < 0.5 ? Math.pow(2, 20 * p - 10) / 2 : (2 - Math.pow(2, -20 * p + 10)) / 2),
+  outBack: (p) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+  outBackBig: (p) => { const c1 = 2.4, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+};
+/** keyframes: [[t, v], [t, v, ease], ...] — the ease belongs to the segment arriving at that key */
+function kf(t, keys) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) {
+    if (t <= keys[i][0]) {
+      const [t0, v0] = keys[i - 1];
+      const [t1, v1, e = E.inOutCubic] = keys[i];
+      return lerp(v0, v1, e((t - t0) / (t1 - t0)));
+    }
+  }
+  return keys[keys.length - 1][1];
+}
+/** extra blur while a whip-pan is at speed (a smear, where subframes alone would ghost) */
+const whipBlur = (t, a, b) => 22 * Math.pow(Math.sin(Math.PI * seg(t, a, b)), 6);
+function rng(seed) { return () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }; }
+const vis = (e, on) => { e.style.display = on ? '' : 'none'; };
+const f2 = (n) => n.toFixed(2);
+/** masked line reveal: rises in at tin, slides out upward at tout */
+function mline(span, t, tin, tout = 1e9, din = 0.55, dout = 0.4) {
+  const pi = E.outQuart(seg(t, tin, tin + din));
+  const po = E.inQuart(seg(t, tout, tout + dout));
+  span.style.transform = `translateY(${f2((1 - pi) * 115 - po * 115)}%)`;
+}
+/** a toggleable little svg icon set (lucide-style strokes) */
+const ICON = {
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  crop: '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',
+  eyeoff: '<path d="M10.7 5.1A10.7 10.7 0 0 1 12 5c7 0 10 7 10 7a13 13 0 0 1-1.7 2.7"/><path d="M6.6 6.6A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 1 0 4.2 4.2"/><path d="m2 2 20 20"/>',
+  focus: '<circle cx="12" cy="12" r="3"/><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>',
+  arrow: '<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
+  type: '<path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/>',
+  copy: '<rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+};
+const icon = (name, size = 22, sw = 2.2, color = 'currentColor') => `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICON[name]}</svg>`;
+
+// ============================================================ screenshots (drawn once, like the app's sample)
+const ui = (w, s) => `${w} ${s}px Figtree, ui-sans-serif, system-ui, sans-serif`;
+const mono = (s) => `500 ${s}px "Geist Mono", ui-monospace, monospace`;
+function ctx2d(W, H) { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.textBaseline = 'middle'; return [c, x]; }
+function kit(x) {
+  const box = (bx, by, w, h, r, fill, stroke) => { x.beginPath(); x.roundRect(bx, by, w, h, r); x.fillStyle = fill; x.fill(); if (stroke) { x.strokeStyle = stroke; x.lineWidth = 1.5; x.stroke(); } };
+  const text = (s, tx, ty, font, color, align = 'left') => { x.font = font; x.fillStyle = color; x.textAlign = align; x.fillText(s, tx, ty); return x.measureText(s).width; };
+  return { box, text };
+}
+
+// ---- 1. the app's own sample: a payments dashboard (ported from src/lib/image.ts)
+function drawDashboard() {
+  const W = 1600, H = 1000;
+  const [c, x] = ctx2d(W, H);
+  const { box, text } = kit(x);
+  const INK = '#0f172a', MUTED = '#64748b', BORDER = '#e2e8f0';
+  const card = (cx, cy, w, h, title) => { box(cx, cy, w, h, 16, '#ffffff', BORDER); text(title, cx + 28, cy + 36, ui(700, 18), INK); x.fillStyle = BORDER; x.fillRect(cx, cy + 68, w, 1); };
+  const badge = (label, right, cy, fill, color) => { x.font = ui(600, 14); const w = x.measureText(label).width + 28; box(right - w, cy - 15, w, 30, 15, fill); text(label, right - w / 2, cy, ui(600, 14), color, 'center'); };
+  x.fillStyle = '#f6f7f9'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, 260, H); x.fillStyle = BORDER; x.fillRect(259, 0, 1, H);
+  const logo = x.createLinearGradient(28, 22, 64, 58); logo.addColorStop(0, '#818cf8'); logo.addColorStop(1, '#4f46e5');
+  box(28, 20, 38, 38, 11, logo); text('P', 47, 40, ui(700, 20), '#ffffff', 'center'); text('Paydeck', 80, 40, ui(700, 21), INK);
+  ['Overview', 'Payments', 'Customers', 'Payouts', 'Disputes', 'Settings'].forEach((label, i) => {
+    const ny = 118 + i * 50, active = label === 'Payments';
+    if (active) box(16, ny - 21, 228, 42, 10, '#eef2ff');
+    box(36, ny - 8, 16, 16, 5, active ? '#4f46e5' : '#cbd5e1');
+    text(label, 66, ny, ui(active ? 600 : 500, 16), active ? '#4338ca' : MUTED);
+  });
+  box(24, H - 76, 42, 42, 21, '#fde68a'); text('AK', 45, H - 55, ui(700, 14), '#92400e', 'center');
+  text('Ananya K.', 78, H - 64, ui(600, 15), INK); text('Admin', 78, H - 44, ui(400, 13), MUTED);
+  x.fillStyle = '#ffffff'; x.fillRect(260, 0, W - 260, 72); x.fillStyle = BORDER; x.fillRect(260, 71, W - 260, 1);
+  let bx = 300; bx += text('Payments', bx, 36, ui(500, 15), MUTED) + 12; bx += text('/', bx, 36, ui(500, 15), '#cbd5e1') + 12; text('pay_8KzQ3mX1vT', bx, 36, mono(15), INK);
+  box(W - 440, 17, 300, 38, 10, '#f1f5f9'); text('Search payments…', W - 416, 36, ui(400, 15), '#94a3b8'); text('⌘K', W - 160, 36, mono(13), '#94a3b8', 'right');
+  box(W - 116, 17, 38, 38, 19, '#f1f5f9'); box(W - 103, 30, 12, 12, 6, '#94a3b8'); box(W - 66, 17, 38, 38, 19, '#c7d2fe'); text('AK', W - 47, 36, ui(700, 13), '#3730a3', 'center');
+  const L = 300, R = W - 60;
+  text('Payment details', L, 120, ui(700, 30), INK); text('Created Sep 24, 2026 at 14:32 IST', L, 156, ui(400, 16), MUTED);
+  box(R - 124, 100, 124, 42, 10, '#ffffff', BORDER); text('Export', R - 62, 121, ui(600, 15), INK, 'center');
+  box(L, 188, R - L, 86, 14, '#fef2f2', '#fecaca'); box(L + 24, 211, 40, 40, 20, '#ef4444'); text('!', L + 44, 232, ui(700, 22), '#ffffff', 'center');
+  text('Payment failed', L + 82, 217, ui(700, 18), '#991b1b'); text('Card declined by the issuing bank: insufficient funds (code 51).', L + 82, 246, ui(400, 16), '#b91c1c');
+  box(R - 190, 209, 166, 44, 10, '#dc2626'); text('Retry payment', R - 107, 231, ui(600, 16), '#ffffff', 'center');
+  const sw = 600;
+  card(L, 300, sw, 344, 'Summary'); text('Amount', L + 28, 396, ui(500, 14), MUTED); text('₹12,499.00', L + 28, 434, ui(700, 36), INK);
+  [['Status', ''], ['Payment method', 'Visa •••• 4242'], ['Order ID', 'ORD-2026-00871']].forEach(([label, value], i) => {
+    const ry = 494 + i * 50; x.fillStyle = '#f1f5f9'; x.fillRect(L + 28, ry - 25, sw - 56, 1); text(label, L + 28, ry, ui(500, 15), MUTED);
+    if (label === 'Status') badge('Failed', L + sw - 28, ry, '#fee2e2', '#b91c1c'); else text(value, L + sw - 28, ry, i === 2 ? mono(15) : ui(600, 15), INK, 'right');
+  });
+  const cx = L + sw + 24, cw = R - cx;
+  card(cx, 300, cw, 344, 'Customer'); badge('KYC verified', cx + cw - 28, 336, '#dcfce7', '#15803d');
+  [['Name', 'Rahul Mehta'], ['Email', 'rahul.mehta@example.com'], ['Phone', '+91 98765 43210'], ['Customer ID', 'cus_Nq7xT29LbZ', true], ['PAN', 'BQZPM4821K', true]].forEach(([label, value, isMono], i) => {
+    const ry = 400 + i * 52; if (i) { x.fillStyle = '#f1f5f9'; x.fillRect(cx + 28, ry - 26, cw - 56, 1); }
+    text(label, cx + 28, ry, ui(500, 15), MUTED); text(value, cx + cw - 28, ry, isMono ? mono(16) : ui(600, 16), INK, 'right');
+  });
+  card(L, 668, R - L, 296, 'Activity'); x.fillStyle = BORDER; x.fillRect(L + 35, 766, 2, 3 * 48);
+  [['Payment created', '14:32:05', '#94a3b8'], ['3-D Secure challenge passed', '14:32:19', '#22c55e'], ['Authorization requested from issuer', '14:32:20', '#94a3b8'], ['Declined: insufficient funds', '14:32:21', '#ef4444']].forEach(([label, time, dot], i) => {
+    const ay = 766 + i * 48, last = i === 3;
+    box(L + 29, ay - 7, 14, 14, 7, dot, '#ffffff'); text(label, L + 60, ay, ui(last ? 600 : 500, 16), last ? '#b91c1c' : INK); text(time, R - 28, ay, mono(14), MUTED, 'right');
+  });
+  return { c, W, H, rects: {
+    banner: [288, 178, 1264, 106], customer: [1286, 378, 240, 246], pay: [712, 522, 176, 96], crop: [276, 84, 1288, 900],
+  } };
+}
+
+// ---- 2. a chat where only one message should be shared
+function drawChat() {
+  const W = 820, H = 1560;
+  const [c, x] = ctx2d(W, H);
+  const { box, text } = kit(x);
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
+  text('9:41', 64, 40, ui(700, 28), '#111');
+  for (let i = 0; i < 4; i++) box(640 + i * 12, 46 - (i + 1) * 5, 8, (i + 1) * 5 + 4, 2, '#111');
+  box(704, 28, 50, 24, 7, 'transparent', '#111'); box(708, 32, 34, 16, 4, '#111');
+  // header
+  x.fillStyle = '#f8f8fa'; x.fillRect(0, 76, W, 120); x.fillStyle = '#e6e6ea'; x.fillRect(0, 195, W, 1.5);
+  x.strokeStyle = '#2f6fed'; x.lineWidth = 5; x.lineCap = 'round'; x.beginPath(); x.moveTo(52, 118); x.lineTo(34, 136); x.lineTo(52, 154); x.stroke();
+  const av = x.createLinearGradient(100, 100, 172, 172); av.addColorStop(0, '#fdba74'); av.addColorStop(1, '#f97316');
+  box(92, 100, 72, 72, 36, av); text('R', 128, 137, ui(700, 32), '#fff', 'center');
+  text('Rohan', 186, 122, ui(700, 32), '#111'); text('online', 186, 158, ui(500, 23), '#22a55b');
+  // messages
+  const MSG = [
+    ['chip', 'Yesterday'],
+    ['L', 'did you see her story last night??'],
+    ['R', "don't. not talking about it"],
+    ['L', "fair. how's the new job going?"],
+    ['R', 'honestly? already thinking of quitting'],
+    ['L', 'lol same. also you still owe me ₹640'],
+    ['R', 'sending it tonight, promise'],
+    ['chip', 'Today'],
+    ['L', 'Change of plan: dinner is at Olive Bistro, 12th Main, Indiranagar. 8:30 pm, table under Rohan.', 'key'],
+    ['R', 'perfect, sharing with the gang'],
+  ];
+  const FS = 30, LH = 40, PX = 26, PY = 18, MAXW = 500;
+  const wrap = (s) => { x.font = ui(500, FS); const words = s.split(' '); const lines = []; let cur = ''; for (const w of words) { const nx = cur ? cur + ' ' + w : w; if (x.measureText(nx).width > MAXW && cur) { lines.push(cur); cur = w; } else cur = nx; } lines.push(cur); return lines; };
+  let y = 236, prev = null;
+  const bubbles = [];
+  let key = null;
+  for (const [side, s, flag] of MSG) {
+    if (side === 'chip') { y += 18; x.font = ui(600, 22); const w = x.measureText(s).width + 36; box(W / 2 - w / 2, y, w, 40, 20, '#f0f0f3'); text(s, W / 2, y + 21, ui(600, 22), '#8a8a92', 'center'); y += 40 + 26; prev = null; continue; }
+    if (prev && prev !== side) y += 14;
+    const lines = wrap(s);
+    x.font = ui(500, FS);
+    const tw = Math.max(...lines.map((l) => x.measureText(l).width));
+    const bw = tw + PX * 2, bh = lines.length * LH + PY * 2;
+    const bx = side === 'L' ? 32 : W - 32 - bw;
+    box(bx, y, bw, bh, 30, side === 'L' ? '#ececf0' : '#2f6fed');
+    lines.forEach((l, i) => text(l, bx + PX, y + PY + LH * i + LH / 2 + 1, ui(500, FS), side === 'L' ? '#141416' : '#fff'));
+    const r = [bx - 6, y - 6, bw + 12, bh + 12];
+    if (flag === 'key') key = r; else bubbles.push(r);
+    y += bh + 12; prev = side;
+  }
+  // composer
+  x.fillStyle = '#f8f8fa'; x.fillRect(0, H - 130, W, 130); x.fillStyle = '#e6e6ea'; x.fillRect(0, H - 130, W, 1.5);
+  box(32, H - 106, 60, 60, 30, '#ececf0'); text('+', 62, H - 77, ui(500, 40), '#6b6b73', 'center');
+  box(112, H - 106, 676, 60, 30, '#ffffff', '#dcdce2'); text('Message', 140, H - 76, ui(500, 26), '#a0a0a8');
+  console.log('chat content bottom', y);
+  return { c, W, H, rects: { bubbles, key } };
+}
+
+// ---- 3. a bank statement with exactly one row worth sharing
+function drawStatement() {
+  const W = 1600, H = 1100;
+  const [c, x] = ctx2d(W, H);
+  const { box, text } = kit(x);
+  const INK = '#0f172a', MUTED = '#64748b', BORDER = '#e5e7eb';
+  x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
+  const lg = x.createLinearGradient(60, 40, 110, 90); lg.addColorStop(0, '#2dd4bf'); lg.addColorStop(1, '#0f766e');
+  box(60, 40, 52, 52, 14, lg); text('N', 86, 67, ui(800, 28), '#fff', 'center');
+  text('Northbank', 128, 60, ui(800, 28), INK); text('Savings account', 128, 88, ui(500, 16), MUTED);
+  text('Account statement', W - 60, 58, ui(700, 30), INK, 'right'); text('01 Sep 2026 – 30 Sep 2026', W - 60, 92, ui(500, 17), MUTED, 'right');
+  x.fillStyle = BORDER; x.fillRect(60, 126, W - 120, 1.5);
+  const info = (label, value, lx, ly, isMono) => { text(label, lx, ly, ui(500, 15), MUTED); return text(value, lx, ly + 30, isMono ? mono(19) : ui(600, 19), INK); };
+  info('Account holder', 'Aditi Sharma', 60, 164);
+  const wAcc = info('Account number', '5021 0034 8812 6721', 60, 238, true);
+  const wIfsc = info('IFSC', 'NBNK0001234', 460, 238, true);
+  const wCif = info('Customer ID', 'CIF 88120467', 460, 164, true);
+  text('Address', 860, 164, ui(500, 15), MUTED);
+  const wA1 = text('14, 2nd Cross, HSR Layout', 860, 194, ui(600, 19), INK);
+  const wA2 = text('Bengaluru, Karnataka 560102', 860, 222, ui(600, 19), INK);
+  // summary
+  const sums = [['Opening balance', '₹1,84,220.50'], ['Total credits', '₹1,12,000.00'], ['Total debits', '₹58,342.00'], ['Closing balance', '₹2,37,878.50']];
+  const sw = (W - 120 - 3 * 20) / 4;
+  sums.forEach(([l, v], i) => { const sx = 60 + i * (sw + 20); box(sx, 300, sw, 96, 14, '#f8fafc', BORDER); text(l, sx + 24, 330, ui(500, 15), MUTED); text(v, sx + 24, 364, ui(700, 25), INK); });
+  // table
+  const COLS = [60, 200, 740, 960, 1150, 1540];
+  x.fillStyle = '#f1f5f9'; box(60, 424, W - 120, 52, 10, '#f1f5f9');
+  ['Date', 'Description', 'Reference', 'Debit', 'Credit', 'Balance'].forEach((h, i) => text(h, i >= 3 ? [0, 0, 0, 1100, 1300, 1516][i] : COLS[i] + 20, 450, ui(700, 15), '#475569', i >= 3 ? 'right' : 'left'));
+  const ROWS = [
+    ['01 Sep', 'Salary · Acme Labs Pvt Ltd', 'NEFT 447129', '', '1,12,000.00', '2,96,220.50'],
+    ['02 Sep', 'UPI · Fresh Basket groceries', 'UPI 223104', '2,340.00', '', '2,93,880.50'],
+    ['03 Sep', 'Electricity bill · BESCOM', 'BBPS 991285', '1,862.00', '', '2,92,018.50'],
+    ['05 Sep', 'UPI · Rent, September · Ramesh Kumar', 'UPI 582066', '18,000.00', '', '2,74,018.50'],
+    ['08 Sep', 'ATM withdrawal · HSR Layout', 'ATM 007113', '5,000.00', '', '2,69,018.50'],
+    ['12 Sep', 'UPI · Apollo Pharmacy', 'UPI 773041', '1,140.00', '', '2,67,878.50'],
+    ['16 Sep', 'EMI · Personal loan', 'ECS 330172', '22,000.00', '', '2,45,878.50'],
+    ['21 Sep', 'UPI · Sneha (dinner split)', 'UPI 194237', '2,000.00', '', '2,43,878.50'],
+    ['27 Sep', 'Credit card bill payment', 'IMPS 660418', '6,000.00', '', '2,37,878.50'],
+  ];
+  const RH = 64, R0 = 476;
+  const rows = [];
+  ROWS.forEach((r, i) => {
+    const ry = R0 + i * RH;
+    if (i) { x.fillStyle = '#f1f5f9'; x.fillRect(60, ry, W - 120, 1.5); }
+    const cy = ry + RH / 2;
+    text(r[0], 80, cy, ui(500, 17), MUTED);
+    text(r[1], 220, cy, ui(600, 18), INK);
+    text(r[2], 760, cy, mono(16), MUTED);
+    if (r[3]) text(r[3], 1100, cy, mono(17), '#b91c1c', 'right');
+    if (r[4]) text(r[4], 1300, cy, mono(17), '#15803d', 'right');
+    text(r[5], 1516, cy, mono(17), INK, 'right');
+    rows.push([60, ry + 4, W - 120, RH - 8]);
+  });
+  const ty = R0 + ROWS.length * RH + 30;
+  text('This is a computer-generated statement and does not require a signature.', 60, ty, ui(400, 14), '#94a3b8');
+  const rent = rows[3];
+  return { c, W, H, rects: {
+    solids: [[52, 244, wAcc + 16, 36], [452, 170, wCif + 16, 36], [452, 244, wIfsc + 16, 36], [852, 180, wA1 + 16, 30], [852, 208, wA2 + 16, 30]],
+    summary: [60, 300, W - 120, 96],
+    rows: rows.filter((_, i) => i !== 3),
+    rentBal: [1350, rent[1], 190, rent[3]],
+    rent: [rent[0] - 6, rent[1] - 4, 1300 - rent[0] + 20, rent[3] + 8],
+  } };
+}
+
+function variants(shot) {
+  const { c, W, H } = shot;
+  // pixelate
+  const s = 8, [sc, sx] = ctx2d(Math.ceil(W / s), Math.ceil(H / s));
+  sx.imageSmoothingEnabled = true; sx.drawImage(c, 0, 0, sc.width, sc.height);
+  const [pc, px] = ctx2d(W, H); px.imageSmoothingEnabled = false; px.drawImage(sc, 0, 0, W, H);
+  // blur
+  const [bc, bx] = ctx2d(W, H); bx.filter = 'blur(13px)'; bx.drawImage(c, 0, 0); bx.filter = 'none';
+  bx.globalAlpha = 0.35; bx.fillStyle = '#ffffff'; bx.fillRect(0, 0, W, H);
+  shot.pix = pc.toDataURL(); shot.blur = bc.toDataURL();
+}
+
+// ============================================================ compositions
+/**
+ * A Glaze "canvas": mesh background, window, and the screenshot inside a view that can be cropped and zoomed.
+ * Overlays (redactions, spotlight, annotations) live in screenshot space so they follow every crop and zoom.
+ */
+function makeComp(shot, meshCls, title) {
+  const root = el('div', 'comp', $('#comps'));
+  const bg = el('div', 'bg ' + meshCls, root);
+  const wnd = el('div', 'wnd', root);
+  const tbar = el('div', 'tbar', wnd, `<div class="tl"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div><div class="tt">${title || ''}</div>`);
+  const view = el('div', 'view', wnd);
+  const sh = el('div', 'shot', view);
+  sh.style.width = shot.W + 'px'; sh.style.height = shot.H + 'px';
+  sh.appendChild(shot.c);
+  return { root, bg, wnd, tbar, view, sh, shot, L: null };
+}
+function addRed(comp, r, kind) {
+  const d = el('div', kind === 'solid' ? 'solid' : 'red', comp.sh);
+  Object.assign(d.style, { left: r[0] + 'px', top: r[1] + 'px', width: r[2] + 'px', height: r[3] + 'px' });
+  if (kind !== 'solid') {
+    const inner = el('div', null, d);
+    Object.assign(inner.style, { position: 'absolute', left: -r[0] + 'px', top: -r[1] + 'px', width: comp.shot.W + 'px', height: comp.shot.H + 'px', backgroundImage: `url(${kind === 'pix' ? comp.shot.pix : comp.shot.blur})` });
+  }
+  d._r = r;
+  return d;
+}
+/** reveal a redaction left-to-right like a drag (p 0..1), with a fade */
+function redAt(d, p, fade = true) {
+  const r = d._r;
+  d.style.display = p <= 0 ? 'none' : '';
+  d.style.width = f2(Math.max(1, r[2] * p)) + 'px';
+  if (fade) d.style.opacity = f2(clamp(p * 3));
+}
+function addSpot(comp) { const d = el('div', 'spot', comp.sh); return d; }
+function spotAt(d, rect, pad, a) {
+  d.style.display = a <= 0.001 ? 'none' : '';
+  Object.assign(d.style, { left: rect[0] - pad + 'px', top: rect[1] - pad + 'px', width: rect[2] + pad * 2 + 'px', height: rect[3] + pad * 2 + 'px', boxShadow: `0 0 0 4000px rgba(12,16,28,${f2(a)})` });
+}
+function addAnn(comp) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('class', 'ann'); svg.setAttribute('width', comp.shot.W); svg.setAttribute('height', comp.shot.H);
+  comp.sh.appendChild(svg);
+  const mk = (tag, attrs) => { const e = document.createElementNS(ns, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); svg.appendChild(e); return e; };
+  return { svg, mk };
+}
+/** draw-on for a path/rect with a known length */
+function drawOn(e, len, p) { e.setAttribute('stroke-dasharray', `${len} ${len}`); e.setAttribute('stroke-dashoffset', f2(len * (1 - p))); e.style.display = p <= 0 ? 'none' : ''; }
+
+/** lay out a comp. o = {x, y, crop:[x,y,w,h], s, pad, tb, rad, zoom, focus:[x,y]} (local coords centred on x,y) */
+function layoutComp(C, o) {
+  const [cx, cy, cw, ch] = o.crop;
+  const vw = cw * o.s, vh = ch * o.s;
+  const W = vw + o.pad * 2, H = vh + o.tb + o.pad * 2;
+  Object.assign(C.bg.style, { left: f2(-W / 2) + 'px', top: f2(-H / 2) + 'px', width: f2(W) + 'px', height: f2(H) + 'px', borderRadius: f2(o.bgRad ?? 28) + 'px', opacity: f2(o.bgA), boxShadow: `0 40px 90px -40px rgba(10,20,50,${f2(0.55 * o.bgA)})` });
+  const wx = -vw / 2, wy = -H / 2 + o.pad;
+  Object.assign(C.wnd.style, { left: f2(wx) + 'px', top: f2(wy) + 'px', width: f2(vw) + 'px', height: f2(vh + o.tb) + 'px', borderRadius: f2(o.rad) + 'px',
+    boxShadow: `0 ${f2(10 + 20 * o.bgA)}px ${f2(30 + 40 * o.bgA)}px -10px rgba(0,0,0,${f2(0.22 + 0.2 * o.bgA)}), 0 0 0 1px rgba(0,0,0,.06)` });
+  C.tbar.style.height = f2(o.tb) + 'px'; C.tbar.style.display = o.tb < 0.5 ? 'none' : '';
+  C.view.style.top = f2(o.tb) + 'px'; C.view.style.width = f2(vw) + 'px'; C.view.style.height = f2(vh) + 'px';
+  const Z = o.zoom ?? 1, f = o.focus ?? [0, 0];
+  const tx = ((f[0] - cx) - f[0] * Z) * o.s, ty = ((f[1] - cy) - f[1] * Z) * o.s;
+  C.sh.style.transform = `translate(${f2(tx)}px, ${f2(ty)}px) scale(${(o.s * Z).toFixed(5)})`;
+  C.root.style.left = f2(o.x) + 'px'; C.root.style.top = f2(o.y) + 'px';
+  C.L = { vx: wx, vy: wy + o.tb, tx, ty, k: o.s * Z, H, W };
+}
+/** screenshot coords -> comp-local coords */
+const toLocal = (C, sx, sy) => [C.L.vx + C.L.tx + sx * C.L.k, C.L.vy + C.L.ty + sy * C.L.k];
+
+// ============================================================ build
+let DASH, CHAT, BANK, M, CH, BK;
+const WALLS = [
+  ['Sign in to continue', 'Continue with email', '#2563eb'],
+  ['Create a free account', 'Sign up', '#7c3aed'],
+  ['Verify your email first', 'Resend link', '#0891b2'],
+  ['Upgrade to export', 'Go Pro · $9/mo', '#ea580c'],
+  ['Get our desktop app', 'Download', '#16a34a'],
+  ['Start your free trial', 'Add a card', '#db2777'],
+  ['Log in to save your edit', 'Log in', '#2563eb'],
+  ['Remove the watermark?', 'Upgrade', '#ca8a04'],
+  ['Uploading to our servers…', null, '#64748b'],
+  ['Accept cookies to continue', 'Accept all', '#111827'],
+];
+const GRID = { w: 330, h: 224, gap: 26, cols: 5 };
+GRID.left = (1920 - (GRID.cols * GRID.w + (GRID.cols - 1) * GRID.gap)) / 2;
+GRID.top = 330;
+const ROWY0 = 250, ROWH = 64, ROWGAP = 14;
+const WIN_T = WALLS.map((_, i) => 2.0 + i * 0.25);
+let WINS = [];
+
+function buildWins() {
+  const host = $('#wins');
+  const r = rng(77);
+  WINS = WALLS.map(([h, btn, col], i) => {
+    const w = el('div', 'win', host);
+    const row = el('div', 'row', w, `<div class="rk">${String(i + 1).padStart(2, '0')}</div><div><div class="sk" style="width:${360 + r() * 260 | 0}px"></div><div class="sk2" style="width:${160 + r() * 120 | 0}px"></div></div>`);
+    const blocks = Array.from({ length: 7 }, () => `<div class="blk" style="left:${14 + r() * 200 | 0}px;top:${10 + r() * 150 | 0}px;width:${40 + r() * 110 | 0}px;height:${10 + r() * 40 | 0}px"></div>`).join('');
+    const page = el('div', 'page', w, `<div class="chrome"><i></i><i></i><i></i><b></b></div><div class="body">${blocks}</div><div class="veil"></div>
+      <div class="modal"><span class="x">✕</span><div class="ic" style="background:${col}1f;color:${col}">${icon('lock', 18, 2.4)}</div><h4>${h}</h4>${btn ? `<div class="btn" style="background:${col}">${btn}</div>` : '<div class="bar"><i></i></div>'}</div>
+      <div class="badge">#${i + 1}</div>`);
+    return { w, row, page, modal: page.querySelector('.modal'), i };
+  });
+}
+
+function buildChips() {
+  const items = ['Free', 'No sign-up', 'Nothing uploads'];
+  return items.map((s) => el('div', 'chip', $('#chips'), `${icon('check', 24, 2.8)}<span>${s}</span>`));
+}
+let CHIPS;
+
+function buildToolbar() {
+  const tb = el('div', null, $('#comps'));
+  tb.id = 'toolbar';
+  tb.innerHTML = `<div id="tbActive"></div>` + ['crop', 'eyeoff', 'focus', 'arrow', 'type'].map((n) => `<div class="tb" data-n="${n}">${icon(n, 23, 2)}</div>`).join('') + `<div class="sep"></div><div class="copy">${icon('copy', 20, 2.2)}Copy</div>`;
+  const toast = el('div', null, $('#comps'), `<div class="ok">${icon('check', 18, 3.2, '#fff')}</div>Copied to clipboard`);
+  toast.id = 'toast';
+  return { tb, toast };
+}
+let TB;
+
+function buildCompare() {
+  const r1 = ['Sign up', 'Verify email', 'Upload', 'Edit', 'Upgrade', 'Download'];
+  const r2 = ['Paste', 'Edit', 'Copy'];
+  const row1 = $('#row1'), row2 = $('#row2');
+  const c1 = [], c2 = [], a1 = [], a2 = [];
+  r1.forEach((s, i) => { if (i) a1.push(el('div', 'carr', row1, '→')); c1.push(el('div', 'cchip', row1, s)); });
+  r2.forEach((s, i) => { if (i) a2.push(el('div', 'carr g', row2, '→')); c2.push(el('div', 'cchip g', row2, s)); });
+  return { c1, c2, a1, a2 };
+}
+let CMP;
+
+// ============================================================ ACT I: search + walls
+const QUERY = 'screenshot editor';
+function updateDark(t) {
+  const on = t < 10.7;
+  vis($('#dark'), on);
+  if (!on) return;
+  // search pill
+  const sIn = E.outQuart(seg(t, 0.0, 0.45));
+  const lift = E.inOutQuart(seg(t, 1.5, 2.0));
+  const sOut = seg(t, 4.2, 4.6);
+  const sp = $('#search');
+  sp.style.transform = `translateY(${f2(lerp(24, 0, sIn) + lerp(0, -380, lift))}px) scale(${f2(lerp(0.94, 1, sIn) * lerp(1, 0.78, lift) * (1 - 0.02 * Math.sin(Math.PI * seg(t, 1.38, 1.52))))})`;
+  sp.style.opacity = f2(sIn * (1 - sOut));
+  vis(sp, t < 4.7);
+  const n = Math.floor(clamp((t - 0.4) / 0.85) * QUERY.length);
+  $('#q').innerHTML = n === 0 ? '<span class="ph">Search the web</span>' : QUERY.slice(0, n);
+  $('#caret').style.opacity = (n < QUERY.length || Math.floor(t * 2.2) % 2 === 0) && t < 1.5 ? 1 : 0;
+  $('#enter').style.background = t > 1.38 && t < 1.6 ? 'rgba(255,255,255,.14)' : 'transparent';
+
+  // results -> windows
+  const push = kf(t, [[2.0, 1], [4.6, 1.05, E.lin], [5.2, 1.09, E.outCubic]]);
+  const dim = E.inOutCubic(seg(t, 4.35, 4.9));
+  $('#gridCam').style.transform = `scale(${f2(push)})`;
+  $('#gridCam').style.opacity = f2(lerp(1, 0.22, dim) * (1 - seg(t, 7.6, 8.0)));
+  $('#gridCam').style.filter = dim > 0.01 ? `blur(${f2(dim * 7)}px)` : 'none';
+  vis($('#gridCam'), t >= 1.55 && t < 8.05);
+  for (const W of WINS) {
+    const i = W.i, col = i % GRID.cols, rw = Math.floor(i / GRID.cols);
+    const rowIn = E.outQuart(seg(t, 1.6 + i * 0.035, 1.95 + i * 0.035));
+    const m = E.outExpo(seg(t, WIN_T[i], WIN_T[i] + 0.5));
+    const A = { x: 480, y: ROWY0 + i * (ROWH + ROWGAP) + (1 - rowIn) * 30, w: 960, h: ROWH };
+    const B = { x: GRID.left + col * (GRID.w + GRID.gap), y: GRID.top + rw * (GRID.h + GRID.gap), w: GRID.w, h: GRID.h };
+    // rows not yet opened drift up out of the way as the grid fills
+    const clear = E.inOutCubic(seg(t, 2.0, 4.3));
+    const ax = A.x, ay = A.y + clear * 260;
+    Object.assign(W.w.style, { left: f2(lerp(ax, B.x, m)) + 'px', top: f2(lerp(ay, B.y, m)) + 'px', width: f2(lerp(A.w, B.w, m)) + 'px', height: f2(lerp(A.h, B.h, m)) + 'px', opacity: f2(rowIn * (m > 0 ? 1 : 1 - clear * 0.85)) });
+    W.row.style.opacity = f2(1 - seg(m, 0, 0.35));
+    W.page.style.opacity = f2(seg(m, 0.15, 0.5));
+    const mp = E.outBackBig(seg(t, WIN_T[i] + 0.12, WIN_T[i] + 0.42));
+    W.modal.style.transform = `scale(${f2(lerp(0.6, 1, mp))})`;
+    W.modal.style.opacity = f2(seg(t, WIN_T[i] + 0.12, WIN_T[i] + 0.2));
+    // all walls pulse once together when the last lands
+    const pulse = Math.sin(Math.PI * seg(t, 4.5, 4.75));
+    W.w.style.boxShadow = `0 0 0 ${f2(1 + pulse * 3)}px rgba(255,69,58,${f2(0.08 + pulse * 0.8)}), 0 30px 60px -24px rgba(0,0,0,.9)`;
+  }
+  // kinetic lines
+  mline($('#k1 .line > span'), t, 4.55, 5.45, 0.5, 0.3);
+  mline($('#k2 .line > span'), t, 5.55, 6.45, 0.5, 0.3);
+  mline($('#k3 .line > span'), t, 6.55, 7.7, 0.5, 0.35);
+  vis($('#kin'), t > 4.5 && t < 8.1);
+  // Why?
+  const w = $('#why');
+  const wi = E.outCubic(seg(t, 8.0, 8.7)), wo = E.inCubic(seg(t, 9.0, 9.4));
+  w.style.opacity = f2(wi * (1 - wo));
+  w.style.transform = `scale(${f2(lerp(1.12, 1, wi) * lerp(1, 0.9, wo))})`;
+  w.style.filter = `blur(${f2((1 - wi) * 16 + wo * 10)}px)`;
+  vis(w, t > 7.95 && t < 9.45);
+  // the drop
+  const d = $('#drop');
+  const fall = seg(t, 9.3, 10.0);
+  const dy = lerp(-120, 540, E.inQuad(fall));
+  const stretch = 1 + 0.35 * E.inQuad(fall);
+  d.style.transform = `translate(960px, ${f2(dy)}px) scale(${f2(1 / Math.sqrt(stretch))}, ${f2(stretch)})`;
+  vis(d, t > 9.3 && t < 10.0);
+  // ripple ring
+  const rp = seg(t, 10.0, 10.7), rr = lerp(40, 1300, E.outExpo(rp));
+  Object.assign($('#ring').style, { left: f2(960 - rr) + 'px', top: f2(540 - rr) + 'px', width: f2(rr * 2) + 'px', height: f2(rr * 2) + 'px', opacity: f2(1 - rp) });
+  vis($('#ring'), t >= 10.0 && t < 10.7);
+}
+
+// ============================================================ ACT II: reveal + lockup (it travels through the whole film)
+let LOCKW = 0;
+function lockLayout(t) {
+  const L = $('#lock');
+  const word = $('#lockWord');
+  // lockup centred: icon centre at x0; wordmark to its right
+  const total = 160 + 36 + LOCKW;
+  const xc = 960 - total / 2 + 80;
+  const iconIn = E.outBackBig(seg(t, 10.0, 10.5));
+  const slide = E.inOutQuart(seg(t, 10.3, 10.85));
+  // where it sits: centre (reveal) -> corner (demo) -> centre (end)
+  const toCorner = E.inOutQuart(seg(t, 11.9, 12.45));
+  const toEnd = E.inOutQuart(seg(t, 37.35, 38.05));
+  const cornerK = 0.3, cornerX = 58 + 80 * cornerK, cornerY = 56 + 80 * cornerK;
+  const endY = 588;
+  let x = lerp(960, xc, slide), y = 470, k = 1;
+  x = lerp(x, cornerX, toCorner); y = lerp(y, cornerY, toCorner); k = lerp(1, cornerK, toCorner);
+  const endK = 0.62, endX = 960 - (160 + 36 + LOCKW) * endK / 2 + 80 * endK;
+  x = lerp(x, endX, toEnd); y = lerp(y, endY, toEnd); k = lerp(k, endK, toEnd);
+  const icon = $('#lockIcon');
+  const s0 = t < 10.0 ? 0 : lerp(0.28, 1, iconIn);
+  icon.style.transform = `scale(${f2(s0)})`;
+  L.style.transform = `translate(${f2(x)}px, ${f2(y)}px) scale(${k.toFixed(4)})`;
+  // wordmark letters rise
+  [...word.children].forEach((sp, i) => {
+    const p = E.outQuart(seg(t, 10.45 + i * 0.05, 10.95 + i * 0.05));
+    sp.style.transform = `translateY(${f2((1 - p) * 60)}px)`;
+    sp.style.opacity = f2(p);
+  });
+  // the corner mark steps back while the compare scene plays, returns for the end card
+  const cmpHide = seg(t, 31.7, 32.1) * (1 - seg(t, 37.3, 37.5));
+  L.style.opacity = f2(1 - cmpHide);
+  vis(L, t >= 10.0);
+}
+
+function updateReveal(t) {
+  const p = $('#paper');
+  vis(p, t >= 10.0);
+  const rp = E.outExpo(seg(t, 10.0, 10.65));
+  const r = lerp(0, 1400, rp);
+  p.style.clipPath = rp < 1 ? `circle(${f2(r)}px at 960px 540px)` : 'none';
+  lockLayout(t);
+  CHIPS.forEach((c, i) => {
+    const ti = 11.0 + i * 0.25;
+    const pi = E.outBackBig(seg(t, ti, ti + 0.4)), po = E.inCubic(seg(t, 11.75 + i * 0.04, 12.05 + i * 0.04));
+    const w = c.offsetWidth;
+    c.style.left = f2(CHIPX[i] - w / 2) + 'px';
+    c.style.top = f2(640 + (1 - pi) * 30 - po * 40) + 'px';
+    c.style.transform = `scale(${f2(lerp(0.7, 1, pi))})`;
+    c.style.opacity = f2(clamp(pi * 2) * (1 - po));
+    vis(c, t > ti && t < 12.2);
+  });
+}
+let CHIPX = [];
+
+// ============================================================ ACT III: main example (the app's own sample)
+const MWORDS = [
+  [12.1, 'Paste.', 'No upload. No account.<br>Just <b style="font-weight:650;color:#1a1a1a">⌘V</b> and you’re in.'],
+  [14.0, 'Crop.', 'Cut everything that<br>isn’t the point.'],
+  [15.5, 'Blur.', 'Names, emails, IDs,<br>card numbers. Gone.'],
+  [17.0, '<span class="serif" style="font-size:1.12em">Highlight.</span>', 'Spotlight what matters.<br>Point right at it.'],
+  [18.5, 'Copy.', 'Straight to your clipboard.<br>Paste it anywhere.'],
+];
+let MW = [];
+function buildMainWords() {
+  const w = $('#mw'), d = $('#md');
+  w.style.position = 'relative'; w.style.height = '130px';
+  d.style.position = 'relative'; d.style.height = '90px';
+  MW = MWORDS.map(([t0, word, desc]) => {
+    const a = el('div', 'line', w, `<span>${word}</span>`); a.style.position = 'absolute'; a.style.left = '0'; a.style.top = '0';
+    const b = el('div', null, d, desc); b.style.position = 'absolute'; b.style.left = '0'; b.style.top = '0'; b.style.whiteSpace = 'nowrap';
+    return { t0, a: a.firstChild, b };
+  });
+}
+const FULL = [0, 0, 1600, 1000];
+const lerpR = (a, b, p) => a.map((v, i) => lerp(v, b[i], p));
+function fitS(r, mw, mh) { return Math.min(mw / r[2], mh / r[3]); }
+
+function updateMain(t) {
+  const on = t > 11.95 && t < 20.4;
+  vis($('#mainText'), on); vis(M.root, on); vis(TB.tb, on); vis(TB.toast, on);
+  if (!on) { vis($('#cursor'), false); return; }
+  // words
+  MW.forEach((m, i) => {
+    const tout = i < MW.length - 1 ? MW[i + 1].t0 - 0.05 : 19.75;
+    mline(m.a, t, m.t0, tout, 0.55, 0.3);
+    const pi = E.outQuart(seg(t, m.t0 + 0.08, m.t0 + 0.6)), po = E.inCubic(seg(t, tout, tout + 0.25));
+    m.b.style.opacity = f2(pi * (1 - po));
+    m.b.style.transform = `translateY(${f2((1 - pi) * 18 - po * 12)}px)`;
+  });
+  // keycaps
+  const kIn = E.outBackBig(seg(t, 12.15, 12.5)), kOut = E.inCubic(seg(t, 13.6, 13.95));
+  [[$('#keyCmd'), 12.42, 0], [$('#keyV'), 12.5, 136]].forEach(([k, tp, dx]) => {
+    const press = Math.sin(Math.PI * seg(t, tp, tp + 0.14));
+    k.style.left = 130 + dx + 'px';
+    k.style.top = f2(560 + (1 - kIn) * 40 + press * 8 + kOut * 30) + 'px';
+    k.style.opacity = f2(clamp(kIn * 2) * (1 - kOut));
+    k.style.boxShadow = `0 0 0 1.5px rgba(26,26,26,.08), 0 ${f2(10 - press * 8)}px 0 -2px #dcdad3, 0 22px 30px -12px rgba(20,20,40,.35)`;
+    vis(k, t < 14);
+  });
+  // comp geometry
+  const MAXW = 1000, MAXH = 640;
+  const a = E.inOutQuart(seg(t, 15.0, 15.45));
+  const crop = lerpR(FULL, DASH.rects.crop, a);
+  const s = lerp(fitS(FULL, MAXW, MAXH), fitS(DASH.rects.crop, MAXW, MAXH), a);
+  const sty = E.inOutQuart(seg(t, 13.0, 13.6));
+  const pop = E.outBackBig(seg(t, 12.55, 13.0));
+  const whip = E.inOutExpo(seg(t, 19.7, 20.3));
+  const settle = kf(t, [[18.9, 1], [19.7, 1.025, E.inOutCubic]]);
+  const o = { x: 1250 - whip * 1920, y: 500, crop, s, pad: 56 * sty, tb: 40 * sty, rad: 16 * sty, bgA: sty, bgRad: 30 };
+  layoutComp(M, o);
+  M.root.style.transform = `scale(${f2(lerp(0.4, 1, pop) * settle)})`;
+  M.root.style.opacity = f2(clamp(pop * 3));
+  const wb = whipBlur(t, 19.7, 20.3);
+  M.root.style.filter = TB.tb.style.filter = wb > 0.05 ? `blur(${f2(wb)}px)` : 'none';
+  // crop overlay (before it's applied)
+  const cIn = E.outCubic(seg(t, 14.1, 14.3)), cMove = E.inOutQuart(seg(t, 14.3, 14.9));
+  const cr = lerpR([4, 4, 1592, 992], DASH.rects.crop, cMove);
+  const cAlpha = cIn * (1 - a);
+  const cropEl = M.cropEl;
+  cropEl.style.display = cAlpha > 0.001 ? '' : 'none';
+  Object.assign(cropEl.style, { left: cr[0] + 'px', top: cr[1] + 'px', width: cr[2] + 'px', height: cr[3] + 'px', opacity: f2(cAlpha) });
+  cropEl.style.boxShadow = `0 0 0 4000px rgba(10,12,20,${f2(0.5 * cIn)})`;
+  // redactions: drag across customer details, then the payment method + order id
+  const d1 = E.inOutCubic(seg(t, 15.85, 16.3)), d2 = E.inOutCubic(seg(t, 16.5, 16.78));
+  redAt(M.r1, d1, false); redAt(M.r2, d2, false);
+  // selection marquee while dragging, like the app
+  M.r1.style.boxShadow = `0 0 0 3px rgba(59,116,209,${f2(0.9 * (1 - seg(t, 16.3, 16.55)))})`;
+  M.r2.style.boxShadow = `0 0 0 3px rgba(59,116,209,${f2(0.9 * (1 - seg(t, 16.78, 17.0)))})`;
+  // spotlight + box + arrow + tag
+  const sp = E.inOutCubic(seg(t, 17.05, 17.55));
+  const sr = lerpR([0, 0, 1600, 1000], DASH.rects.banner, sp);
+  spotAt(M.spot, sr, 0, 0.5 * sp);
+  drawOn(M.box, M.boxLen, E.inOutCubic(seg(t, 17.3, 17.75)));
+  drawOn(M.arrow, M.arrowLen, E.inOutCubic(seg(t, 17.6, 18.05)));
+  const ah = E.outBack(seg(t, 17.98, 18.18));
+  M.head.style.display = ah > 0 ? '' : 'none';
+  M.head.setAttribute('transform', `translate(${M.tip[0]} ${M.tip[1]}) rotate(${M.tipAng}) scale(${f2(ah)})`);
+  const tg = E.outBackBig(seg(t, 18.05, 18.4));
+  M.tag.style.transform = `scale(${f2(tg)})`; M.tag.style.opacity = f2(clamp(tg * 2));
+  // toolbar under the comp
+  const L = M.L;
+  const tbY = o.y + L.H / 2 + 26;
+  const tbIn = E.outQuart(seg(t, 13.3, 13.8));
+  const tbw = TB.tb.offsetWidth;
+  Object.assign(TB.tb.style, { left: f2(o.x - tbw / 2) + 'px', top: f2(tbY + (1 - tbIn) * 30) + 'px', opacity: f2(tbIn) });
+  const slot = t < 15.5 ? 0 : t < 17.0 ? 1 : 2;
+  const act = kf(t, [[13.9, -1], [14.05, 0, E.outBack], [15.45, 0], [15.6, 1, E.outBack], [16.95, 1], [17.1, 2, E.outBack], [18.35, 2], [18.5, 3.5, E.inOutCubic]]);
+  const TBX = TB.slots;
+  const ax = act < 0 ? TBX[0] : lerp(TBX[Math.floor(Math.min(act, 3))], TBX[Math.min(Math.floor(act) + 1, 4)], act - Math.floor(act));
+  const tbA = $('#tbActive');
+  tbA.style.left = f2(act < 3 ? ax : TBX[2]) + 'px';
+  tbA.style.opacity = f2(clamp(act + 1) * (1 - seg(act, 2, 3)));
+  TB.tb.querySelectorAll('.tb').forEach((b, i) => { b.style.color = act >= 0 && Math.round(act) === i && act < 3 ? '#fff' : '#444'; });
+  // cursor (drives the drags and the copy click)
+  const cur = $('#cursor');
+  const P = (sx, sy) => { const [lx, ly] = toLocal(M, sx, sy); return [o.x + lx, o.y + ly]; };
+  const r1 = DASH.rects.customer, r2 = DASH.rects.pay;
+  const pts = [
+    [15.5, P(1300, 900)], [15.85, P(r1[0], r1[1]), E.inOutCubic], [16.3, P(r1[0] + r1[2], r1[1] + r1[3]), E.inOutCubic],
+    [16.5, P(r2[0], r2[1]), E.inOutCubic], [16.78, P(r2[0] + r2[2], r2[1] + r2[3]), E.inOutCubic], [17.05, P(1100, 700), E.inOutCubic],
+  ];
+  const copyX = o.x - tbw / 2 + TB.copyX, copyY = tbY + 32;
+  let cx, cy, cA = 0, press = 0;
+  if (t < 17.4) {
+    cx = kf(t, pts.map(([tt, p, e]) => [tt, p[0], e])); cy = kf(t, pts.map(([tt, p, e]) => [tt, p[1], e]));
+    cA = seg(t, 15.5, 15.7) * (1 - seg(t, 17.05, 17.4));
+    if (t > 15.85 && t < 16.3) press = 1; if (t > 16.5 && t < 16.78) press = 1;
+  } else {
+    const p = E.inOutCubic(seg(t, 18.3, 18.8));
+    cx = lerp(copyX + 260, copyX, p); cy = lerp(copyY + 160, copyY, p);
+    cA = seg(t, 18.3, 18.45) * (1 - seg(t, 19.3, 19.6));
+    press = Math.sin(Math.PI * seg(t, 18.82, 18.98));
+  }
+  cur.style.transform = `translate(${f2(cx - 6)}px, ${f2(cy - 4)}px) scale(${f2(1 - press * 0.12)})`;
+  cur.style.opacity = f2(cA);
+  vis(cur, cA > 0.001);
+  // copy toast
+  const ts = E.outBackBig(seg(t, 18.95, 19.3)), to = E.inCubic(seg(t, 19.5, 19.75));
+  const tw = TB.toast.offsetWidth;
+  Object.assign(TB.toast.style, { left: f2(o.x - tw / 2) + 'px', top: f2(tbY - 80 - ts * 10) + 'px', opacity: f2(clamp(ts * 2) * (1 - to)), transform: `scale(${f2(lerp(0.7, 1, ts))})` });
+  // tool button press flash on copy
+  TB.tb.querySelector('.copy').style.transform = `scale(${f2(1 - 0.06 * Math.sin(Math.PI * seg(t, 18.82, 19.0)))})`;
+  TB.tb.style.transform = `translateX(${f2(-whip * 1920)}px)`;
+  $('#mainText').style.opacity = f2(1 - seg(t, 19.75, 20.0));
+}
+
+// ============================================================ ACT IV: the chat
+function updateChat(t) {
+  const on = t > 19.6 && t < 26.4;
+  vis(CH.root, on); vis($('#chatText'), on);
+  if (!on) return;
+  const inP = E.inOutExpo(seg(t, 19.7, 20.3)), outP = E.inOutExpo(seg(t, 25.7, 26.3));
+  const push = kf(t, [[22.4, 1], [25.7, 1.06, E.inOutCubic]]);
+  const s = 800 / CHAT.H;
+  const o = { x: 1250 + (1 - inP) * 1920 - outP * 1920, y: 540, crop: [0, 0, CHAT.W, CHAT.H], s, pad: 64, tb: 0, rad: 34, bgA: 1, bgRad: 36,
+    zoom: push, focus: [CHAT.rects.key[0] + CHAT.rects.key[2] / 2, CHAT.rects.key[1] + CHAT.rects.key[3] / 2] };
+  layoutComp(CH, o);
+  const wb = whipBlur(t, 19.7, 20.3) + whipBlur(t, 25.7, 26.3);
+  CH.root.style.filter = wb > 0.05 ? `blur(${f2(wb)}px)` : 'none';
+  // blur cascade over every other bubble
+  CH.reds.forEach((d, i) => { const ti = 20.9 + i * 0.125; redAt(d, E.outCubic(seg(t, ti, ti + 0.22))); });
+  const sp = E.inOutCubic(seg(t, 22.1, 22.6));
+  spotAt(CH.spot, lerpR([0, 0, CHAT.W, CHAT.H], CHAT.rects.key, sp), 6, 0.28 * sp);
+  drawOn(CH.box, CH.boxLen, E.inOutCubic(seg(t, 22.3, 22.8)));
+  const tg = E.outBackBig(seg(t, 22.75, 23.1));
+  CH.tag.style.transform = `scale(${f2(tg)})`; CH.tag.style.opacity = f2(clamp(tg * 2));
+  // text
+  const T = $('#chatText');
+  const spans = T.querySelectorAll('.line > span');
+  spans.forEach((sp2, i) => mline(sp2, t, 20.15 + [0, 0.08, 0.16, 0.4, 0.46][i], 25.6 + i * 0.03, 0.6, 0.35));
+}
+
+// ============================================================ ACT V: the bank statement
+function updateBank(t) {
+  const on = t > 25.6 && t < 32.6;
+  vis(BK.root, on); vis($('#bankText'), on);
+  if (!on) return;
+  const inP = E.inOutExpo(seg(t, 25.7, 26.3));
+  const s = 880 / BANK.W;
+  const rent = BANK.rects.rent;
+  const zoom = kf(t, [[29.6, 1], [31.6, 1.32, E.inOutQuart]]);
+  const out = E.inOutCubic(seg(t, 31.6, 32.3));
+  const o = { x: 1310 + (1 - inP) * 1920, y: 530, crop: [0, 0, BANK.W, BANK.H], s, pad: 52, tb: 40, rad: 14, bgA: 1, bgRad: 30,
+    zoom, focus: [rent[0] + rent[2] / 2, rent[1] + rent[3] / 2] };
+  layoutComp(BK, o);
+  BK.root.style.transform = `scale(${f2(1 - out * 0.12)})`;
+  BK.root.style.opacity = f2(1 - out);
+  const wb = whipBlur(t, 25.7, 26.3) + out * 12;
+  BK.root.style.filter = wb > 0.05 ? `blur(${f2(wb)}px)` : 'none';
+  // solids snap on 16ths, left to right
+  BK.solids.forEach((d, i) => { const ti = 27.0 + i * 0.125; redAt(d, E.outQuart(seg(t, ti, ti + 0.14)), false); });
+  // blur: summary, every other row, then the rent row's balance
+  BK.reds.forEach((d, i) => { const ti = 28.0 + i * 0.09; redAt(d, E.outCubic(seg(t, ti, ti + 0.2))); });
+  const sp = E.inOutCubic(seg(t, 29.0, 29.5));
+  spotAt(BK.spot, lerpR([0, 0, BANK.W, BANK.H], rent, sp), 4, 0.35 * sp);
+  drawOn(BK.box, BK.boxLen, E.inOutCubic(seg(t, 29.1, 29.55)));
+  const tg = E.outBackBig(seg(t, 29.5, 29.85));
+  BK.tag.style.transform = `scale(${f2(tg)})`; BK.tag.style.opacity = f2(clamp(tg * 2));
+  const T = $('#bankText');
+  T.querySelectorAll('.line > span').forEach((sp2, i) => mline(sp2, t, 26.15 + [0, 0.08, 0.16, 0.4, 0.46][i], 31.55 + i * 0.03, 0.6, 0.35));
+}
+
+// ============================================================ ACT VI: compare
+function updateCompare(t) {
+  const on = t > 31.7 && t < 37.0;
+  vis($('#compare'), on);
+  if (!on) return;
+  const out = E.inCubic(seg(t, 35.55, 36.0));
+  const l1 = E.outQuart(seg(t, 31.8, 32.3));
+  $('#cl1').style.opacity = f2(l1 * (1 - seg(t, 33.5, 33.9) * 0.55) * (1 - out));
+  CMP.c1.forEach((c, i) => {
+    const ti = 32.0 + i * 0.25, p = E.outBackBig(seg(t, ti, ti + 0.35));
+    c.style.transform = `translateY(${f2((1 - p) * 26)}px) scale(${f2(lerp(0.8, 1, p))})`;
+    c.style.opacity = f2(clamp(p * 2));
+    if (i) { const a = CMP.a1[i - 1]; a.style.opacity = f2(seg(t, ti - 0.05, ti + 0.1)); }
+  });
+  const kill = seg(t, 33.5, 33.95);
+  const row1 = $('#row1');
+  row1.style.opacity = f2(lerp(1, 0.32, E.inOutCubic(kill)) * (1 - out));
+  row1.style.filter = kill > 0 ? `blur(${f2(E.inOutCubic(kill) * 1.5)}px) grayscale(1)` : 'none';
+  const st = $('#strike');
+  const r = ROW1;
+  Object.assign(st.style, { left: f2(r.x - 20) + 'px', top: f2(388 + 33) + 'px', width: f2(r.w + 40) + 'px', transform: `scaleX(${f2(E.inOutQuart(seg(t, 33.45, 33.85)))})`, opacity: f2(1 - out) });
+  const l2 = E.outQuart(seg(t, 33.9, 34.3));
+  $('#cl2').style.opacity = f2(l2 * (1 - out));
+  $('#cl2').style.transform = `translateY(${f2((1 - l2) * 16)}px)`;
+  CMP.c2.forEach((c, i) => {
+    const ti = 34.0 + i * 0.25, p = E.outBackBig(seg(t, ti, ti + 0.4));
+    c.style.transform = `translateY(${f2((1 - p) * 30 - out * 60)}px) scale(${f2(lerp(0.7, 1, p))})`;
+    c.style.opacity = f2(clamp(p * 2) * (1 - out));
+    if (i) { const a = CMP.a2[i - 1]; a.style.opacity = f2(seg(t, ti - 0.05, ti + 0.1) * (1 - out)); }
+  });
+}
+let ROW1;
+
+// ============================================================ ACT VII: end card
+function updateEnd(t) {
+  const on = t > 35.8;
+  vis($('#end'), on);
+  if (!on) return;
+  const up = E.inOutQuart(seg(t, 37.3, 38.0));
+  const H = $('#endH');
+  H.style.top = f2(lerp(405, 225, up)) + 'px';
+  H.style.transform = `scale(${f2(lerp(1, 0.62, up))})`;
+  const spans = H.querySelectorAll('.line > span');
+  mline(spans[0], t, 36.0, 1e9, 0.7); mline(spans[1], t, 36.1, 1e9, 0.7);
+  const u = E.outQuart(seg(t, 37.75, 38.3)), g = E.outQuart(seg(t, 37.95, 38.5));
+  Object.assign($('#url').style, { top: f2(700 + (1 - u) * 20) + 'px', opacity: f2(u) });
+  Object.assign($('#tagline').style, { top: f2(758 + (1 - g) * 20) + 'px', opacity: f2(g) });
+  // slow breathe on the whole end card
+  $('#end').style.transform = `scale(${f2(kf(t, [[36.0, 1.0], [40.0, 1.025, E.lin]]))})`;
+}
+
+function updateGlobal(t) {
+  const f = Math.floor(t * 60);
+  $('#grain').style.transform = `translate(${(f * 37) % 80 - 40}px, ${(f * 53) % 80 - 40}px)`;
+  $('#vig').style.opacity = t < 10 ? 1 : 0.5;
+  // whole-frame fade at the very end is a hold, not a fade: premium end cards sit still
+}
+
+function seek(t) {
+  updateDark(t);
+  updateReveal(t);
+  updateMain(t);
+  updateChat(t);
+  updateBank(t);
+  updateCompare(t);
+  updateEnd(t);
+  updateGlobal(t);
+}
+
+// ============================================================ init
+async function init() {
+  await Promise.all([
+    document.fonts.load("600 100px 'Inter Tight'"), document.fonts.load("italic 400 100px 'Instrument Serif'"),
+    document.fonts.load("500 30px Figtree"), document.fonts.load("700 30px Figtree"), document.fonts.load("800 30px Figtree"), document.fonts.load("500 16px 'Geist Mono'"),
+  ]);
+  await document.fonts.ready;
+  buildWins();
+  CHIPS = buildChips();
+  // wordmark letters
+  $('#lockWord').innerHTML = [...'Glaze'].map((c) => `<span>${c}</span>`).join('');
+  LOCKW = $('#lockWord').getBoundingClientRect().width;
+  // chip positions: centred row
+  const ws = CHIPS.map((c) => c.offsetWidth), gap = 20, tot = ws.reduce((a, b) => a + b) + gap * (ws.length - 1);
+  let acc = 960 - tot / 2; CHIPX = ws.map((w) => { const c = acc + w / 2; acc += w + gap; return c; });
+
+  buildMainWords();
+  DASH = drawDashboard(); variants(DASH);
+  CHAT = drawChat(); variants(CHAT);
+  BANK = drawStatement(); variants(BANK);
+
+  // main comp
+  M = makeComp(DASH, 'mesh-blue', 'Paydeck — Payment details');
+  M.cropEl = el('div', null, M.sh);
+  Object.assign(M.cropEl.style, { position: 'absolute', border: '4px solid #fff', borderRadius: '6px', outline: '1px solid rgba(0,0,0,.2)' });
+  for (const [l, tp] of [['0', '0'], ['100%', '0'], ['0', '100%'], ['100%', '100%']]) {
+    const h = el('div', null, M.cropEl); Object.assign(h.style, { position: 'absolute', left: l, top: tp, width: '28px', height: '28px', margin: '-16px 0 0 -16px', background: '#fff', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,.3)' });
+  }
+  M.r1 = addRed(M, DASH.rects.customer, 'pix');
+  M.r2 = addRed(M, DASH.rects.pay, 'blur');
+  M.spot = addSpot(M);
+  {
+    const A = addAnn(M);
+    const b = DASH.rects.banner;
+    M.box = A.mk('rect', { x: b[0], y: b[1], width: b[2], height: b[3], rx: 18, fill: 'none', stroke: '#ff3b30', 'stroke-width': 6 });
+    M.boxLen = 2 * (b[2] + b[3]);
+    const p0 = [1060, 470], c1 = [1000, 330], p1 = [860, 296];
+    M.arrow = A.mk('path', { d: `M${p0} Q${c1} ${p1}`, fill: 'none', stroke: '#ff3b30', 'stroke-width': 7, 'stroke-linecap': 'round' });
+    M.arrowLen = M.arrow.getTotalLength();
+    M.tip = p1; M.tipAng = Math.atan2(p1[1] - c1[1], p1[0] - c1[0]) * 180 / Math.PI;
+    M.head = A.mk('path', { d: 'M-22 -15 L2 0 L-22 15', fill: 'none', stroke: '#ff3b30', 'stroke-width': 7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+    M.tag = el('div', 'tag', M.sh, 'Why it failed');
+    Object.assign(M.tag.style, { left: '1000px', top: '478px', fontSize: '26px', padding: '10px 20px', transformOrigin: '30% 0' });
+  }
+  TB = buildToolbar();
+  TB.slots = [...TB.tb.querySelectorAll('.tb')].map((b) => b.offsetLeft);
+  const cp = TB.tb.querySelector('.copy'); TB.copyX = cp.offsetLeft + cp.offsetWidth / 2;
+
+  // chat comp
+  CH = makeComp(CHAT, 'mesh-peach', '');
+  CH.reds = CHAT.rects.bubbles.map((r) => addRed(CH, r, 'blur'));
+  CH.spot = addSpot(CH); CH.spot.style.borderRadius = '36px';
+  {
+    const A = addAnn(CH); const k = CHAT.rects.key;
+    CH.box = A.mk('rect', { x: k[0] - 4, y: k[1] - 4, width: k[2] + 8, height: k[3] + 8, rx: 38, fill: 'none', stroke: '#ff3b30', 'stroke-width': 7 });
+    CH.boxLen = 2 * (k[2] + k[3] + 16);
+    CH.tag = el('div', 'tag', CH.sh, 'Share this');
+    Object.assign(CH.tag.style, { left: k[0] + k[2] - 170 + 'px', top: k[1] - 34 + 'px', fontSize: '30px', padding: '10px 22px', transformOrigin: '50% 100%' });
+  }
+
+  // bank comp
+  BK = makeComp(BANK, 'mesh-lagoon', 'Statement_Sep_2026.pdf');
+  BK.solids = BANK.rects.solids.map((r) => addRed(BK, r, 'solid'));
+  BK.reds = [BANK.rects.summary, ...BANK.rects.rows, BANK.rects.rentBal].map((r) => addRed(BK, r, 'blur'));
+  BK.spot = addSpot(BK); BK.spot.style.borderRadius = '14px';
+  {
+    const A = addAnn(BK); const r = BANK.rects.rent;
+    BK.box = A.mk('rect', { x: r[0], y: r[1], width: r[2], height: r[3], rx: 14, fill: 'none', stroke: '#ff3b30', 'stroke-width': 5 });
+    BK.boxLen = 2 * (r[2] + r[3]);
+    BK.tag = el('div', 'tag', BK.sh, 'Paid · 05 Sep ✓');
+    Object.assign(BK.tag.style, { left: r[0] + r[2] - 240 + 'px', top: r[1] - 46 + 'px', fontSize: '24px', padding: '8px 18px', transformOrigin: '50% 100%', background: '#16a34a', boxShadow: '0 10px 24px -8px rgba(22,163,74,.6), 0 0 0 3px #fff' });
+  }
+
+  CMP = buildCompare();
+  $('#compare').style.display = '';
+  const rr = $('#row1').children; const f0 = rr[0].getBoundingClientRect(), fl = rr[rr.length - 1].getBoundingClientRect();
+  ROW1 = { x: f0.left, w: fl.right - f0.left };
+  window.READY = true;
+}
+window.seek = seek;
+init().then(() => {
+  const q = new URLSearchParams(location.search);
+  if (q.has('t')) seek(parseFloat(q.get('t')));
+  else if (q.has('play')) { const t0 = performance.now() - parseFloat(q.get('play') || 0) * 1000; const loop = () => { seek(((performance.now() - t0) / 1000) % 40); requestAnimationFrame(loop); }; loop(); }
+  else seek(0);
+});
+</script>
+</body>
+</html>

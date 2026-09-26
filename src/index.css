@@ -2,14 +2,20 @@
 
 @theme {
   --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Inter Tight', 'Figtree', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
-  --color-rose-glaze: #ff5c8a;
-  --color-wine: #1a0510;
+  /* The theme's one accent color; every tint and glow below is derived from it. */
+  --color-accent: #3b74d1;
+  --color-accent-soft: color-mix(in oklab, var(--color-accent) 40%, white);
+  /* Text and dark UI on the light page. */
+  --color-ink: #1a1a1a;
+  --color-paper: #f7f6f2;
+  --color-wine: #faf9f5;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -19,85 +25,91 @@ body,
 }
 
 body {
-  background: #0a0207;
-  color: #fff;
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: rgba(255, 92, 138, 0.4);
+  background: color-mix(in oklab, var(--color-accent) 25%, transparent);
 }
 
-/* ---------- Backdrop: wine gradient + drifting aurora + stars + grain ---------- */
+/* ---------- Backdrop: warm paper with a halftone sky rising from the bottom ---------- */
 
 .backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
-  background: radial-gradient(120% 90% at 30% 0%, #4a0c2c 0%, #24061a 40%, #0a0207 75%, #030102 100%);
+  background: var(--color-paper);
 }
 
+/* A faint dot grid and a whisper of accent haze, fading out toward the edges and the sky. */
+.backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 45% at 50% 0%, color-mix(in oklab, var(--color-accent) 7%, transparent), transparent 70%),
+    radial-gradient(circle, rgba(20, 20, 20, 0.09) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  mask-image: radial-gradient(75% 65% at 50% 30%, #000 35%, transparent 85%);
+  -webkit-mask-image: radial-gradient(75% 65% at 50% 30%, #000 35%, transparent 85%);
+}
+
+/* The sky: deep accent blue at the bottom edge fading up into the paper, with soft clouds. */
 .aurora {
   position: absolute;
-  inset: -20%;
+  left: -10%;
+  right: -10%;
+  bottom: -8%;
+  height: 40%;
   background:
-    radial-gradient(30% 24% at 28% 22%, rgba(255, 200, 225, 0.8), transparent 70%),
-    radial-gradient(42% 30% at 42% 34%, rgba(214, 70, 150, 0.7), transparent 70%),
-    radial-gradient(36% 26% at 62% 50%, rgba(180, 60, 150, 0.4), transparent 70%),
-    radial-gradient(50% 40% at 86% 22%, rgba(120, 15, 60, 0.7), transparent 70%);
-  filter: blur(40px);
-  animation: drift 26s ease-in-out infinite alternate;
+    radial-gradient(34% 46% at 24% 100%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(26% 34% at 72% 104%, rgba(255, 255, 255, 0.75), transparent 70%),
+    linear-gradient(
+      to top,
+      color-mix(in oklab, var(--color-accent) 80%, #0b2447) 0%,
+      color-mix(in oklab, var(--color-accent) 50%, white) 30%,
+      color-mix(in oklab, var(--color-accent) 10%, var(--color-paper)) 62%,
+      transparent 100%
+    );
+  filter: blur(18px);
+  animation: drift 30s ease-in-out infinite alternate;
 }
 
 @keyframes drift {
   from {
-    transform: translate3d(-2%, -1%, 0) rotate(-3deg) scale(1);
+    transform: translate3d(-1.5%, 0, 0) scale(1);
   }
   to {
-    transform: translate3d(3%, 2%, 0) rotate(3deg) scale(1.08);
+    transform: translate3d(1.5%, -1%, 0) scale(1.04);
   }
 }
 
+/* Halftone dots over the clouds, like a printed sky. */
 .stars {
   position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(1px 1px at 8% 14%, rgba(255, 255, 255, 0.9), transparent 70%),
-    radial-gradient(1px 1px at 23% 61%, rgba(255, 255, 255, 0.7), transparent 70%),
-    radial-gradient(1.5px 1.5px at 37% 32%, rgba(255, 255, 255, 0.8), transparent 70%),
-    radial-gradient(1px 1px at 52% 83%, rgba(255, 255, 255, 0.6), transparent 70%),
-    radial-gradient(1px 1px at 66% 22%, rgba(255, 255, 255, 0.8), transparent 70%),
-    radial-gradient(1.5px 1.5px at 79% 57%, rgba(255, 255, 255, 0.7), transparent 70%),
-    radial-gradient(1px 1px at 91% 9%, rgba(255, 255, 255, 0.9), transparent 70%),
-    radial-gradient(1px 1px at 95% 76%, rgba(255, 255, 255, 0.6), transparent 70%);
-  background-size: 560px 440px;
-  opacity: 0.55;
-  animation: twinkle 5s ease-in-out infinite alternate;
+  inset: auto 0 0 0;
+  height: 28%;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.95) 1.1px, transparent 1.7px);
+  background-size: 6px 6px;
+  mask-image: radial-gradient(38% 75% at 24% 100%, #000 25%, transparent 72%);
+  -webkit-mask-image: radial-gradient(38% 75% at 24% 100%, #000 25%, transparent 72%);
+  opacity: 0.85;
 }
 
 .stars-2 {
-  background-size: 380px 300px;
-  background-position: 140px 90px;
-  opacity: 0.3;
-  animation-delay: -2.5s;
-}
-
-@keyframes twinkle {
-  from {
-    opacity: 0.25;
-  }
-  to {
-    opacity: 0.6;
-  }
+  mask-image: radial-gradient(28% 60% at 74% 100%, #000 15%, transparent 70%);
+  -webkit-mask-image: radial-gradient(28% 60% at 74% 100%, #000 15%, transparent 70%);
+  opacity: 0.6;
 }
 
 .grain {
   position: absolute;
   inset: 0;
-  opacity: 0.16;
-  mix-blend-mode: overlay;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -105,29 +117,43 @@ body {
 /* ---------- Surfaces ---------- */
 
 .glass {
-  background: rgba(38, 10, 26, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(20, 20, 20, 0.07);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 20px 60px -20px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    0 1px 2px rgba(20, 20, 20, 0.04),
+    0 12px 32px -14px rgba(30, 40, 70, 0.2);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+
+/* The options panel: a little more opaque, with a soft glare from the top-left. */
+.glass-panel {
+  background:
+    radial-gradient(120% 50% at 0% 0%, rgba(255, 255, 255, 0.9), transparent 65%),
+    rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(20, 20, 20, 0.07);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 1px 2px rgba(20, 20, 20, 0.04),
+    0 18px 48px -18px rgba(30, 40, 70, 0.25);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
 }
 
 .app-icon {
-  background: linear-gradient(180deg, #ff8fb2 0%, #f4507f 55%, #e2366b 100%);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-accent) 70%, white) 0%, var(--color-accent) 55%, color-mix(in oklab, var(--color-accent) 85%, black) 100%);
   box-shadow:
     inset 0 1.5px 1px rgba(255, 255, 255, 0.65),
-    inset 0 -3px 8px rgba(120, 0, 40, 0.35),
-    0 14px 40px -10px rgba(244, 80, 127, 0.7);
+    inset 0 -3px 8px color-mix(in oklab, color-mix(in oklab, var(--color-accent) 40%, black) 35%, transparent),
+    0 14px 36px -12px color-mix(in oklab, var(--color-accent) 55%, transparent);
 }
 
 .app-icon svg {
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.4)) drop-shadow(0 -1px 0 rgba(90, 0, 30, 0.35));
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.4)) drop-shadow(0 -1px 0 color-mix(in oklab, color-mix(in oklab, var(--color-accent) 30%, black) 35%, transparent));
 }
 
 .checker {
-  background-image: conic-gradient(#2a1320 25%, #1d0c16 0 50%, #2a1320 0 75%, #1d0c16 0);
+  background-image: conic-gradient(#ebeae6 25%, #f8f7f4 0 50%, #ebeae6 0 75%, #f8f7f4 0);
   background-size: 20px 20px;
 }
 
@@ -143,7 +169,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(110deg, transparent 30%, rgba(255, 92, 138, 0.28) 50%, transparent 70%);
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
   transform: translateX(-120%);
   transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -187,7 +213,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .aurora,
-  .stars,
   .float,
   .rise {
     animation: none;
@@ -212,7 +237,7 @@ body {
 .range::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 99px;
-  background: linear-gradient(to right, #ff7aa2 var(--fill), rgba(255, 255, 255, 0.12) var(--fill));
+  background: linear-gradient(to right, var(--color-accent) var(--fill), rgba(20, 20, 20, 0.1) var(--fill));
 }
 .range::-webkit-slider-thumb {
   appearance: none;
@@ -221,26 +246,26 @@ body {
   margin-top: -6px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(255, 92, 138, 0.18), 0 2px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 1px rgba(20, 20, 20, 0.12), 0 0 0 4px color-mix(in oklab, var(--color-accent) 14%, transparent), 0 1px 4px rgba(0, 0, 0, 0.2);
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .range:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 0 6px rgba(255, 92, 138, 0.25), 0 2px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 1px rgba(20, 20, 20, 0.12), 0 0 0 6px color-mix(in oklab, var(--color-accent) 20%, transparent), 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 .range:active::-webkit-slider-thumb,
 .range:focus-visible::-webkit-slider-thumb {
   transform: scale(1.12);
-  box-shadow: 0 0 0 7px rgba(255, 92, 138, 0.3), 0 2px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 1px rgba(20, 20, 20, 0.12), 0 0 0 7px color-mix(in oklab, var(--color-accent) 25%, transparent), 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 .range::-moz-range-track {
   height: 4px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(20, 20, 20, 0.1);
 }
 .range::-moz-range-progress {
   height: 4px;
   border-radius: 99px;
-  background: #ff7aa2;
+  background: var(--color-accent);
 }
 .range::-moz-range-thumb {
   width: 16px;
@@ -248,5 +273,5 @@ body {
   border: 0;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(255, 92, 138, 0.18);
+  box-shadow: 0 0 0 1px rgba(20, 20, 20, 0.12), 0 0 0 4px color-mix(in oklab, var(--color-accent) 14%, transparent);
 }

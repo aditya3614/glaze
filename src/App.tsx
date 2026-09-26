@@ -6,15 +6,28 @@ import { cn } from './components/ui';
 import { fileToCanvas, makeSample } from './lib/image';
 import { applyRedactions } from './lib/redact';
 import { computeLayout, renderScene } from './lib/render';
-import type { Rect } from './lib/render';
 import { DEFAULT_SETTINGS } from './lib/types';
-import type { Redaction, Settings } from './lib/types';
+import type { Doc, Mark, Rect, Redaction, Settings, Tool } from './lib/types';
+import { useHistory } from './lib/useHistory';
 
 const STORAGE_KEY = 'glaze:settings:v1';
 /** Stay under Safari's canvas area limit on big retina screenshots. */
 const MAX_EXPORT_AREA = 16_000_000;
+const EMPTY_DOC: Doc = { marks: [], crop: null };
+
+const TOOL_KEYS: Record<string, Exclude<Tool, null>> = {
+  d: 'sketch',
+  a: 'arrow',
+  b: 'box',
+  t: 'text',
+  s: 'spotlight',
+  r: 'redact',
+  c: 'crop',
+};
 
 function loadSettings(): Settings {
+  // Prerendering at build time has no browser storage.
+  if (typeof window === 'undefined') return DEFAULT_SETTINGS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
@@ -27,8 +40,10 @@ function loadSettings(): Settings {
 export default function App() {
   const [source, setSource] = useState<HTMLCanvasElement | null>(null);
   const [settings, setSettings] = useState<Settings>(loadSettings);
-  const [redactions, setRedactions] = useState<Redaction[]>([]);
-  const [redactMode, setRedactMode] = useState(false);
+  const history = useHistory<Doc>(EMPTY_DOC);
+  const { value: doc, commit, undo, redo, reset } = history;
+  const [tool, setTool] = useState<Tool>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [scale, setScale] = useState<1 | 2>(1);
   const [toast, setToast] = useState<string | null>(null);
   const [fontsReady, setFontsReady] = useState(false);
@@ -52,15 +67,55 @@ export default function App() {
     return () => clearTimeout(t);
   }, [toast]);
 
-  const set = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
-    setSettings((s) => ({ ...s, [key]: value }));
-  }, []);
+  // Picking a drawing tool drops the selection, like in any editor.
+  useEffect(() => {
+    if (tool) setSelectedId(null);
+  }, [tool]);
 
-  const openImage = useCallback((c: HTMLCanvasElement) => {
-    setSource(c);
-    setRedactions([]);
-    setRedactMode(false);
-  }, []);
+  const addMark = useCallback((m: Mark) => commit((d) => ({ ...d, marks: [...d.marks, m] })), [commit]);
+  const replaceMark = useCallback((m: Mark) => commit((d) => ({ ...d, marks: d.marks.map((x) => (x.id === m.id ? m : x)) })), [commit]);
+  const deleteMark = useCallback(
+    (id: string) => commit((d) => (d.marks.some((m) => m.id === id) ? { ...d, marks: d.marks.filter((m) => m.id !== id) } : d)),
+    [commit],
+  );
+  const clearMarks = useCallback(
+    (types: Mark['type'][]) =>
+      commit((d) => (d.marks.some((m) => types.includes(m.type)) ? { ...d, marks: d.marks.filter((m) => !types.includes(m.type)) } : d)),
+    [commit],
+  );
+  const setCrop = useCallback((crop: Rect | null) => commit((d) => (d.crop === crop ? d : { ...d, crop })), [commit]);
+
+  const selected = doc.marks.find((m) => m.id === selectedId);
+
+  const set = useCallback(
+    <K extends keyof Settings>(key: K, value: Settings[K]) => {
+      setSettings((s) => ({ ...s, [key]: value }));
+      // Picking a color while a mark is selected recolors it.
+      if (key === 'penColor' && selected && 'color' in selected && selected.color !== value) {
+        replaceMark({ ...selected, color: value as string });
+      }
+    },
+    [selected, replaceMark],
+  );
+
+  const openImage = useCallback(
+    (c: HTMLCanvasElement) => {
+      setSource(c);
+      reset(EMPTY_DOC);
+      setTool(null);
+      setSelectedId(null);
+    },
+    [reset],
+  );
+
+  const goHome = useCallback(() => {
+    if (!source) return;
+    if (history.canUndo && !window.confirm('Leave this screenshot? Your edits will be lost.')) return;
+    setSource(null);
+    reset(EMPTY_DOC);
+    setTool(null);
+    setSelectedId(null);
+  }, [source, history.canUndo, reset]);
 
   const loadFile = useCallback(
     async (file: Blob) => {
@@ -77,23 +132,20 @@ export default function App() {
   const loadSample = useCallback(async () => openImage(await makeSample()), [openImage]);
   const pick = useCallback(() => fileInput.current?.click(), []);
 
+  const redactions = useMemo(() => doc.marks.filter((m): m is Redaction => m.type === 'redact'), [doc.marks]);
   const processed = useMemo(() => (source ? applyRedactions(source, redactions) : null), [source, redactions]);
-
-  const addRedaction = useCallback(
-    (r: Rect) => setRedactions((list) => [...list, { ...r, id: crypto.randomUUID(), style: settings.redactStyle }]),
-    [settings.redactStyle],
-  );
 
   const renderBlob = useCallback(async (): Promise<Blob> => {
     if (!source || !processed) throw new Error('No image');
-    const L = computeLayout(source.width, source.height, settings);
+    const view = doc.crop ?? { x: 0, y: 0, w: source.width, h: source.height };
+    const L = computeLayout(view.w, view.h, settings);
     const k = Math.min(scale, Math.sqrt(MAX_EXPORT_AREA / (L.width * L.height)));
     const c = document.createElement('canvas');
     c.width = Math.round(L.width * k);
     c.height = Math.round(L.height * k);
-    renderScene(c.getContext('2d')!, { source: processed, original: source, layout: L, settings, scale: k });
+    renderScene(c.getContext('2d')!, { source: processed, original: source, view, marks: doc.marks, layout: L, settings, scale: k });
     return new Promise((resolve, reject) => c.toBlob((b) => (b ? resolve(b) : reject(new Error('Export failed'))), 'image/png'));
-  }, [source, processed, settings, scale]);
+  }, [source, processed, doc, settings, scale]);
 
   const download = useCallback(async () => {
     if (!source) return;
@@ -145,18 +197,27 @@ export default function App() {
       } else if (mod && key === 'c' && source && !window.getSelection()?.toString()) {
         e.preventDefault();
         copy();
-      } else if (mod && key === 'z' && redactions.length) {
+      } else if (mod && (key === 'y' || (key === 'z' && e.shiftKey))) {
         e.preventDefault();
-        setRedactions((r) => r.slice(0, -1));
-      } else if (!mod && key === 'r' && source) {
-        setRedactMode((m) => !m);
+        redo();
+      } else if (mod && key === 'z') {
+        e.preventDefault();
+        undo();
+      } else if ((key === 'backspace' || key === 'delete') && selectedId) {
+        e.preventDefault();
+        deleteMark(selectedId);
+        setSelectedId(null);
+      } else if (!mod && !e.altKey && source && TOOL_KEYS[key]) {
+        const next = TOOL_KEYS[key];
+        setTool((t) => (t === next ? null : next));
       } else if (key === 'escape') {
-        setRedactMode(false);
+        if (selectedId) setSelectedId(null);
+        else setTool(null);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [download, copy, source, redactions.length]);
+  }, [download, copy, undo, redo, deleteMark, source, selectedId]);
 
   return (
     <div className="flex h-full flex-col">
@@ -167,7 +228,19 @@ export default function App() {
         <div className="grain" />
       </div>
 
-      <TopBar hasImage={!!source} scale={scale} setScale={setScale} onPick={pick} onCopy={copy} onDownload={download} />
+      <TopBar
+        hasImage={!!source}
+        scale={scale}
+        setScale={setScale}
+        canUndo={history.canUndo}
+        canRedo={history.canRedo}
+        onUndo={undo}
+        onRedo={redo}
+        onHome={goHome}
+        onPick={pick}
+        onCopy={copy}
+        onDownload={download}
+      />
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex-row lg:overflow-hidden">
         <Stage
@@ -176,8 +249,18 @@ export default function App() {
           settings={settings}
           exportScale={scale}
           fontsReady={fontsReady}
-          redactMode={redactMode}
-          onRedact={addRedaction}
+          doc={doc}
+          tool={tool}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
+          onAdd={addMark}
+          onReplace={replaceMark}
+          onDelete={deleteMark}
+          onPadding={(v) => set('padding', v)}
+          onCrop={(r) => {
+            setCrop(r);
+            setTool(null);
+          }}
           onFile={loadFile}
           onPick={pick}
           onSample={loadSample}
@@ -186,12 +269,14 @@ export default function App() {
           <Panel
             settings={settings}
             set={set}
-            redactMode={redactMode}
-            setRedactMode={setRedactMode}
+            tool={tool}
+            setTool={setTool}
             redactionCount={redactions.length}
-            onUndoRedaction={() => setRedactions((r) => r.slice(0, -1))}
-            onClearRedactions={() => setRedactions([])}
-            hasImage
+            annotationCount={doc.marks.length - redactions.length}
+            onClear={clearMarks}
+            cropped={!!doc.crop}
+            onResetCrop={() => setCrop(null)}
+            selected={selected}
           />
         )}
       </div>
@@ -212,7 +297,7 @@ export default function App() {
         role="status"
         aria-live="polite"
         className={cn(
-          'pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-5 py-2.5 text-[13px] font-semibold text-zinc-900 shadow-[0_12px_40px_-8px_rgba(255,92,138,.6)] transition duration-500 ease-[cubic-bezier(.2,.8,.2,1)]',
+          'pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-ink px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_12px_32px_-8px_rgba(0,0,0,.45)] transition duration-500 ease-[cubic-bezier(.2,.8,.2,1)]',
           toast ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-4 scale-95 opacity-0',
         )}
       >

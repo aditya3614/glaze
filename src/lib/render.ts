@@ -1,12 +1,6 @@
 import { PRESETS, drawPreset } from './backgrounds';
-import type { Aspect, Settings } from './types';
-
-export interface Rect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+import { drawMarks } from './marks';
+import type { Aspect, Mark, Rect, Settings } from './types';
 
 /** Scene geometry in layout units (1 unit = 1 screenshot pixel at 1x). */
 export interface Layout {
@@ -52,13 +46,16 @@ interface SceneInput {
   source: HTMLCanvasElement;
   /** Unredacted screenshot, used only for the blurred background. */
   original: HTMLCanvasElement;
+  /** Part of the screenshot to show, in screenshot pixels. */
+  view: Rect;
+  marks: Mark[];
   layout: Layout;
   settings: Settings;
   /** Output pixels per layout unit. */
   scale: number;
 }
 
-export function renderScene(ctx: CanvasRenderingContext2D, { source, original, layout: L, settings: s, scale }: SceneInput) {
+export function renderScene(ctx: CanvasRenderingContext2D, { source, original, view, marks, layout: L, settings: s, scale }: SceneInput) {
   const u = L.unit;
   const dark = s.frameTheme === 'dark';
 
@@ -66,10 +63,10 @@ export function renderScene(ctx: CanvasRenderingContext2D, { source, original, l
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
   ctx.clearRect(0, 0, L.width, L.height);
 
-  drawBackground(ctx, L, s, original);
+  drawBackground(ctx, L, s, original, view);
   if (s.grain && s.bgType !== 'none') drawGrain(ctx, L);
 
-  const r = Math.min(s.radius * u, L.win.w / 2, L.win.h / 2);
+  const r = windowRadius(L, s);
 
   // Shadows ignore the canvas transform, so their sizes are scaled by hand.
   if (s.shadow > 0) {
@@ -93,7 +90,11 @@ export function renderScene(ctx: CanvasRenderingContext2D, { source, original, l
   ctx.clip();
   if (s.frame !== 'none') drawBar(ctx, L, s, dark);
   ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(source, L.image.x, L.image.y, L.image.w, L.image.h);
+  ctx.drawImage(source, view.x, view.y, view.w, view.h, L.image.x, L.image.y, L.image.w, L.image.h);
+  if (marks.length) {
+    ctx.translate(L.image.x - view.x, L.image.y - view.y);
+    drawMarks(ctx, marks, view);
+  }
   ctx.restore();
 
   // Hairline edge so the window reads cleanly against any background.
@@ -109,12 +110,23 @@ export function renderScene(ctx: CanvasRenderingContext2D, { source, original, l
   ctx.restore();
 }
 
+function windowRadius(L: Layout, s: Settings) {
+  return Math.min(s.radius * L.unit, L.win.w / 2, L.win.h / 2);
+}
+
+/** Clips to the window and maps screenshot pixels onto it, for drawing marks on an overlay. */
+export function enterScreenshotSpace(ctx: CanvasRenderingContext2D, L: Layout, s: Settings, view: Rect) {
+  roundRect(ctx, L.win, windowRadius(L, s));
+  ctx.clip();
+  ctx.translate(L.image.x - view.x, L.image.y - view.y);
+}
+
 function roundRect(ctx: CanvasRenderingContext2D, rc: Rect, r: number) {
   ctx.beginPath();
   ctx.roundRect(rc.x, rc.y, rc.w, rc.h, r);
 }
 
-function drawBackground(ctx: CanvasRenderingContext2D, L: Layout, s: Settings, original: HTMLCanvasElement) {
+function drawBackground(ctx: CanvasRenderingContext2D, L: Layout, s: Settings, original: HTMLCanvasElement, view: Rect) {
   const { width: W, height: H } = L;
   switch (s.bgType) {
     case 'none':
@@ -124,7 +136,7 @@ function drawBackground(ctx: CanvasRenderingContext2D, L: Layout, s: Settings, o
       ctx.fillRect(0, 0, W, H);
       return;
     case 'blur':
-      drawBlurredCover(ctx, original, W, H, L.unit);
+      drawBlurredCover(ctx, original, view, W, H, L.unit);
       return;
     case 'preset':
       drawPreset(ctx, PRESETS.find((p) => p.id === s.bgPreset) ?? PRESETS[0], W, H);
@@ -142,17 +154,18 @@ function supportsFilter(ctx: CanvasRenderingContext2D) {
   return filterSupport;
 }
 
-function drawBlurredCover(ctx: CanvasRenderingContext2D, img: HTMLCanvasElement, W: number, H: number, u: number) {
-  const k = Math.max(W / img.width, H / img.height) * 1.2;
-  const dw = img.width * k;
-  const dh = img.height * k;
+/** Only the visible (cropped) part is used, so cropped-out content never shows up here. */
+function drawBlurredCover(ctx: CanvasRenderingContext2D, img: HTMLCanvasElement, view: Rect, W: number, H: number, u: number) {
+  const k = Math.max(W / view.w, H / view.h) * 1.2;
+  const dw = view.w * k;
+  const dh = view.h * k;
   const dx = (W - dw) / 2;
   const dy = (H - dh) / 2;
 
   ctx.save();
   if (supportsFilter(ctx)) {
     ctx.filter = `blur(${60 * u}px) saturate(1.5)`;
-    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.drawImage(img, view.x, view.y, view.w, view.h, dx, dy, dw, dh);
   } else {
     // Fallback: a tiny downsample stretched back up reads as a soft blur.
     const t = document.createElement('canvas');
@@ -160,7 +173,7 @@ function drawBlurredCover(ctx: CanvasRenderingContext2D, img: HTMLCanvasElement,
     t.height = Math.max(1, Math.round((24 * dh) / dw));
     const tc = t.getContext('2d')!;
     tc.imageSmoothingQuality = 'high';
-    tc.drawImage(img, 0, 0, t.width, t.height);
+    tc.drawImage(img, view.x, view.y, view.w, view.h, 0, 0, t.width, t.height);
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(t, dx, dy, dw, dh);
   }

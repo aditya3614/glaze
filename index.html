@@ -3,15 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Glaze turns raw screenshots into beautiful, share-ready images. Runs 100% in your browser." />
-    <title>Glaze</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ff86ac'/%3E%3Cstop offset='1' stop-color='%23e3386c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath fill='%23911543' d='M16 7s-6 6.5-6 10.4a6 6 0 0 0 12 0C22 13.5 16 7 16 7z'/%3E%3C/svg%3E" />
+    <title>Glaze – Free Screenshot Beautifier &amp; Redaction Tool</title>
+    <meta name="description" content="Make beautiful screenshots in seconds: gradient backgrounds, window frames, arrows, text and one-drag redaction. Free, no sign-up, 100% in your browser." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#f7f6f2" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Social previews. URL-dependent tags (canonical, og:url, og:image) and the
+         structured data are added by the seo plugin in vite.config.ts. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Glaze" />
+    <meta property="og:title" content="Glaze – Screenshots, glazed to perfection" />
+    <meta property="og:description" content="Free screenshot beautifier: backgrounds, window frames, arrows, text and one-drag redaction. Runs 100% in your browser." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Glaze – Screenshots, glazed to perfection" />
+    <meta name="twitter:description" content="Free screenshot beautifier: backgrounds, window frames, arrows, text and one-drag redaction. Runs 100% in your browser." />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Geist:wght@500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&family=Inter+Tight:wght@500;600&family=Instrument+Serif:ital@0;1&family=Geist:wght@500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <noscript>Glaze needs JavaScript to run.</noscript>
+    <noscript>Glaze needs JavaScript to edit screenshots.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

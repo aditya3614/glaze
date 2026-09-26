@@ -6,9 +6,9 @@ export const MOD = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(na
 
 export function Section({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
   return (
-    <section className="border-b border-white/[0.07] px-5 py-5 last:border-b-0">
+    <section className="border-b border-ink/[0.07] px-5 py-5 last:border-b-0">
       <div className="mb-3.5 flex h-5 items-center justify-between">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/45">{title}</h2>
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">{title}</h2>
         {aside}
       </div>
       <div className="space-y-4">{children}</div>
@@ -30,8 +30,8 @@ export function Slider({ label, value, min, max, step = 1, onChange }: SliderPro
   return (
     <label className="block">
       <div className="mb-1.5 flex justify-between text-[13px]">
-        <span className="text-white/80">{label}</span>
-        <span className="font-mono tabular-nums text-white/40">{value}</span>
+        <span className="text-ink/80">{label}</span>
+        <span className="font-mono tabular-nums text-ink/40">{value}</span>
       </div>
       <input
         type="range"
@@ -58,12 +58,12 @@ export function Segmented<T extends string | number>({ options, value, onChange,
   const i = Math.max(0, options.findIndex((o) => o.value === value));
   return (
     <div
-      className="relative grid rounded-full bg-black/30 p-1 ring-1 ring-white/10"
+      className="relative grid rounded-full bg-ink/[0.05] p-1 ring-1 ring-ink/[0.07]"
       style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
     >
       <div
         aria-hidden
-        className="absolute bottom-1 left-1 top-1 rounded-full bg-white/[0.14] shadow-[inset_0_1px_0_rgba(255,255,255,.18),0_2px_8px_rgba(0,0,0,.25)] transition-transform duration-300 ease-[cubic-bezier(.2,.8,.2,1)]"
+        className="absolute bottom-1 left-1 top-1 rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,.08),0_2px_8px_-2px_rgba(0,0,0,.12)] ring-1 ring-ink/[0.06] transition-transform duration-300 ease-[cubic-bezier(.2,.8,.2,1)]"
         style={{ width: `calc((100% - 8px) / ${options.length})`, transform: `translateX(${i * 100}%)` }}
       />
       {options.map((o) => (
@@ -76,7 +76,7 @@ export function Segmented<T extends string | number>({ options, value, onChange,
           className={cn(
             'relative z-10 flex items-center justify-center gap-1.5 rounded-full font-medium transition-colors duration-200',
             size === 'sm' ? 'h-7 text-xs' : 'h-8 text-[13px]',
-            o.value === value ? 'text-white' : 'text-white/50 hover:text-white/85',
+            o.value === value ? 'text-ink' : 'text-ink/55 hover:text-ink',
           )}
         >
           {o.label}
@@ -93,13 +93,13 @@ export function Toggle({ label, checked, onChange }: { label: string; checked: b
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex w-full items-center justify-between text-[13px] text-white/80"
+      className="flex w-full items-center justify-between text-[13px] text-ink/80"
     >
       <span>{label}</span>
       <span
         className={cn(
           'relative h-5 w-9 rounded-full transition-colors duration-300',
-          checked ? 'bg-rose-glaze shadow-[0_0_14px_rgba(255,92,138,.5)]' : 'bg-white/15',
+          checked ? 'bg-accent shadow-[0_2px_10px_color-mix(in_oklab,var(--color-accent)_35%,transparent)]' : 'bg-ink/15',
         )}
       >
         <span
@@ -115,7 +115,7 @@ export function Toggle({ label, checked, onChange }: { label: string; checked: b
 
 export function Kbd({ children }: { children: ReactNode }) {
   return (
-    <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-white/15 bg-white/[0.07] px-1 font-sans text-[11px] font-medium text-white/60">
+    <kbd className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-ink/15 bg-white px-1 font-sans text-[11px] font-medium text-ink/60 shadow-[0_1px_0_rgba(0,0,0,.06)]">
       {children}
     </kbd>
   );
@@ -126,8 +126,8 @@ export function AppIcon({ size = 28, className }: { size?: number; className?: s
   return (
     <div className={cn('app-icon grid shrink-0 place-items-center', className)} style={{ width: size, height: size, borderRadius: size * 0.28 }}>
       <svg viewBox="0 0 24 24" width={size * 0.56} height={size * 0.56} aria-hidden>
-        <path fill="#9a1747" d="M12 2.5s-6.5 7-6.5 11.3a6.5 6.5 0 0 0 13 0C18.5 9.5 12 2.5 12 2.5z" />
-        <ellipse cx="9.6" cy="13.8" rx="1.3" ry="2.3" fill="#ffc2d6" opacity=".55" transform="rotate(20 9.6 13.8)" />
+        <path style={{ fill: 'color-mix(in oklab, var(--color-accent) 45%, black)' }} d="M12 2.5s-6.5 7-6.5 11.3a6.5 6.5 0 0 0 13 0C18.5 9.5 12 2.5 12 2.5z" />
+        <ellipse cx="9.6" cy="13.8" rx="1.3" ry="2.3" style={{ fill: 'color-mix(in oklab, var(--color-accent) 30%, white)' }} opacity=".55" transform="rotate(20 9.6 13.8)" />
       </svg>
     </div>
   );
@@ -136,17 +136,17 @@ export function AppIcon({ size = 28, className }: { size?: number; className?: s
 const pill =
   'inline-flex items-center justify-center gap-1.5 rounded-full font-medium transition duration-300 ease-[cubic-bezier(.2,.8,.2,1)] active:scale-[.97] disabled:pointer-events-none disabled:opacity-40';
 
-/** White pill, like "Get now". */
+/** Solid near-black pill for the main action. */
 export const buttonPrimary = cn(
   pill,
-  'btn-shine h-9 bg-white px-4 text-[13px] font-semibold text-zinc-950 shadow-[0_1px_0_rgba(255,255,255,.6)_inset,0_6px_20px_-8px_rgba(255,255,255,.4)] hover:-translate-y-px hover:shadow-[0_1px_0_rgba(255,255,255,.6)_inset,0_10px_28px_-8px_rgba(255,92,138,.65)]',
+  'btn-shine h-9 bg-ink px-4 text-[13px] font-semibold text-white shadow-[0_1px_0_rgba(255,255,255,.14)_inset,0_6px_16px_-8px_rgba(0,0,0,.5)] hover:-translate-y-px hover:bg-ink/90 hover:shadow-[0_1px_0_rgba(255,255,255,.14)_inset,0_10px_24px_-8px_rgba(0,0,0,.45)]',
 );
 
-/** Dark translucent pill, like "Sign in" / "Explore". */
+/** White pill with a hairline border. */
 export const buttonSecondary = cn(
   pill,
-  'h-9 bg-white/[0.08] px-4 text-[13px] text-white ring-1 ring-white/10 hover:-translate-y-px hover:bg-white/[0.14] hover:ring-white/20',
+  'h-9 bg-white px-4 text-[13px] text-ink ring-1 ring-ink/10 shadow-[0_1px_2px_rgba(0,0,0,.05)] hover:-translate-y-px hover:ring-ink/20',
 );
 
 /** Quiet text pill for toolbars. */
-export const buttonGhost = cn(pill, 'h-9 px-3 text-[13px] text-white/70 hover:bg-white/[0.08] hover:text-white');
+export const buttonGhost = cn(pill, 'h-9 px-3 text-[13px] text-ink/70 hover:bg-ink/[0.06] hover:text-ink');
